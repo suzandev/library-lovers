@@ -1,3 +1,9 @@
+import SliderWrapper from "../components/SliderWrapper";
+
 export default function Home() {
-  return <h1 className="text-xl text-green-500">Home</h1>;
+  return (
+    <section>
+      <SliderWrapper />
+    </section>
+  );
 }

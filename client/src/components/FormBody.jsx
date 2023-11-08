@@ -1,19 +1,39 @@
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-export default function FormBody({ children }) {
+export default function FormBody({
+  children,
+  title,
+  linkTitle,
+  to,
+  footerGuid,
+}) {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center">
-      <div className="bg-brand-white border border-gray-300 p-8">
-        <h1 className="text-brand-text text-lg font-bold  sm:text-3xl md:text-5xl">
-          Already A Member? Sign In:
+    <div className="bg-brand-white mx-auto my-6 flex max-w-lg border border-gray-300">
+      <div className="w-full space-y-4 p-8">
+        <h1 className="text-brand-text mb-6 text-center  text-lg font-bold sm:text-3xl">
+          {title}
         </h1>
+        {children}
+        <div className="flex w-full items-center justify-center gap-2">
+          <p className="text-brand-text text-sm md:text-lg">{footerGuid}</p>
+          <Link
+            to={to}
+            replace={true}
+            className="text-brand-green text-sm hover:underline md:text-lg"
+          >
+            {linkTitle}
+          </Link>
+        </div>
       </div>
-
-      {children}
     </div>
   );
 }
 
 FormBody.propTypes = {
   children: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+  linkTitle: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
+  footerGuid: PropTypes.string,
 };

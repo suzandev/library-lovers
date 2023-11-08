@@ -5,9 +5,14 @@ import LoginForm from "../components/LoginForm";
 export default function Login() {
   return (
     <section>
-      <LoginBg />
+      <LoginBg title="Login" />
 
-      <FormBody>
+      <FormBody
+        title="Already A Member? Sign In:"
+        footerGuid="Don't have an account?"
+        linkTitle="Register Now"
+        to="/register"
+      >
         <LoginForm />
       </FormBody>
     </section>

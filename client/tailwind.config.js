@@ -7,6 +7,10 @@ export default {
         "brand-text": "var(--text)",
         "brand-gray": "var(--bg)",
         "brand-white": "var(--white)",
+        "brand-green": "var(--green)",
+      },
+      fontFamily: {
+        sans: ["Mulish", "sans-serif"],
       },
     },
   },

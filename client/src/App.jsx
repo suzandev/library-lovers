@@ -1,19 +1,30 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import AppLayout from "./components/Applayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<Home />} />
+        <Route
+          index
+          element={
+            <AppLayout>
+              <Home />
+            </AppLayout>
+          }
+        />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<h1>Register</h1>} />
+        <Route path="/register" element={<Register />} />
         <Route
           element={
             <ProtectedRoute>
-              <Outlet />
+              <AppLayout>
+                <Outlet />
+              </AppLayout>
             </ProtectedRoute>
           }
         >
