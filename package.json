@@ -1,0 +1,23 @@
+{
+  "name": "library_lovers",
+  "version": "1.0.0",
+  "description": "This is a library management system for librarian and readers.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "set NODE_ENV=development&& nodemon index.js --ignore client",
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\""
+  },
+  "author": "Suzan Chandra",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "react-router-dom": "^6.18.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  }
+}
