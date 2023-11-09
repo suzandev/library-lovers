@@ -124,3 +124,25 @@ export const sliderContent = [
     rating: 1.8,
   },
 ];
+
+export const environments = [
+  {
+    name: "Quality Education",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore.",
+    to: "quality-education",
+  },
+
+  {
+    name: "Free Internet",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore.",
+    to: "free-internet",
+  },
+  {
+    name: "Unlimited books",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor incididunt ut labore.",
+    to: "unlimited-books",
+  },
+];
