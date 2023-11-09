@@ -1,6 +1,6 @@
 export default function TestimonialCard() {
   return (
-    <div className="bg-brand-white w-full space-y-6 border-r p-4 shadow-md md:max-w-sm">
+    <div className="bg-brand-white w-full space-y-6 p-4 md:max-w-sm">
       <div>STARS</div>
       <p>
         Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod
