@@ -5,7 +5,7 @@ import Navigation from "./Navigation";
 
 export default function SmallDeviceNav({ handleClose }) {
   return (
-    <div className="bg-brand-white absolute inset-0 flex flex-col justify-between p-10 md:hidden">
+    <div className="bg-brand-white absolute inset-0 z-10 flex flex-col justify-between p-10 md:hidden">
       <button
         className="text-brand-green absolute right-10 top-10"
         onClick={handleClose}
