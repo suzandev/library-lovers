@@ -146,3 +146,44 @@ export const environments = [
     to: "unlimited-books",
   },
 ];
+
+export const categories = [
+  {
+    name: "Action",
+    to: "action",
+    qty: 20,
+    title: "Thriller & Suspense",
+    image:
+      "https://img.readthistwice.com/unsafe/lists/best-psychological-thriller-books-6a612f6fba.png",
+  },
+  {
+    name: "Comedy",
+    to: "comedy",
+    qty: 30,
+    title: "Humor & Satire",
+    image:
+      "https://static.standard.co.uk/2022/05/19/11/lifestyle.jpg?crop=8:5,smart&quality=75&auto=webp&width=1024",
+  },
+  {
+    name: "Drama",
+    to: "drama",
+    qty: 40,
+    title: "Literary Fiction",
+    image:
+      "https://celadonbooks.com/wp-content/uploads/2020/02/what-is-literary-fiction.jpg",
+  },
+  {
+    name: "Horror",
+    to: "horror",
+    qty: 10,
+    title: "Horror Stories",
+    image: "/book_category_default.png",
+  },
+  {
+    name: "Romance",
+    to: "romance",
+    qty: 67,
+    title: "Romance Novels",
+    image: "/book_category_default.png",
+  },
+];

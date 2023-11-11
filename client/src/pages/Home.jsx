@@ -1,3 +1,4 @@
+import BookList from "../components/BookList";
 import Environment from "../components/Environment";
 import SliderWrapper from "../components/SliderWrapper";
 import Testimonials from "../components/Testimonials";
@@ -10,6 +11,9 @@ export default function Home() {
       </section>
       <section>
         <Environment />
+      </section>
+      <section>
+        <BookList />
       </section>
       <section>
         <Testimonials />
