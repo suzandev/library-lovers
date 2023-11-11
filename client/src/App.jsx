@@ -33,6 +33,7 @@ function App() {
           }
         >
           <Route path="/add-book" element={<AddBook />} />
+          <Route path="/edit/:id" element={<AddBook editBook={true} />} />
           <Route path="/all-books" element={<AllBooks />} />
           <Route path="/books/:category" element={<h1>Category Books</h1>} />
           <Route path="/borrowed-Books" element={<BorrowedBooks />} />
