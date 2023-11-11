@@ -187,3 +187,26 @@ export const categories = [
     image: "/book_category_default.png",
   },
 ];
+
+export const categoryOptions = [
+  {
+    name: "Action",
+    value: "action",
+  },
+  {
+    name: "Comedy",
+    value: "comedy",
+  },
+  {
+    name: "Drama",
+    value: "drama",
+  },
+  {
+    name: "Horror",
+    value: "horror",
+  },
+  {
+    name: "Romance",
+    value: "romance",
+  },
+];

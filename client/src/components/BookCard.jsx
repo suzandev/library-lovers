@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import AppButton from "./AppButton";
 
 export default function BookCard({ book, type }) {
   return (
@@ -24,12 +25,25 @@ export default function BookCard({ book, type }) {
         </div>
       )}
 
-      <div className="px-2 py-1">
-        <h3 className="text-brand-text text-lg font-bold max-sm:text-sm">
-          {book.name}
-        </h3>
-        <p className="text-sm text-gray-500">{book.short_description}</p>
-      </div>
+      {type === "book" && (
+        <div className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h5 className="text-brand-text text-xs">{book.author}</h5>
+              <h3 className="text-brand-text text-lg font-bold max-sm:text-sm">
+                {book.name.slice(0, 50)}
+              </h3>
+              <h4 className="bg-brand-green w-fit p-1 px-2 text-sm font-medium text-white">
+                {book.category}
+              </h4>
+            </div>
+            <div className="self-start">rating</div>
+          </div>
+          <div className="mt-6 flex items-center justify-between">
+            <AppButton to={`/books/details/${book.id}`} title="Details" />
+          </div>
+        </div>
+      )}
     </Link>
   );
 }
