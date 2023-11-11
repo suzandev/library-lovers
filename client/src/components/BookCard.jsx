@@ -23,6 +23,13 @@ export default function BookCard({ book, type }) {
           </div>
         </div>
       )}
+
+      <div className="px-2 py-1">
+        <h3 className="text-brand-text text-lg font-bold max-sm:text-sm">
+          {book.name}
+        </h3>
+        <p className="text-sm text-gray-500">{book.short_description}</p>
+      </div>
     </Link>
   );
 }

@@ -8,8 +8,8 @@ export default function AppLayout({ children }) {
       <Header />
       <div className="overflow-auto">
         <main className="mx-auto max-w-6xl max-xl:px-4">{children}</main>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }
