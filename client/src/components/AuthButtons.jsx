@@ -8,12 +8,12 @@ export default function AuthButtons({ smallDev }) {
         smallDev ? "flex flex-col gap-4" : "flex gap-4 max-md:hidden"
       }`}
     >
-      <AppButton title="Login" to="/login" />
+      {/* <AppButton title="Login" to="/login" /> */}
 
-      {/* <>
+      <>
         <AppButton title="Add" to="/add-book" />
         <AppButton title="Logout" to="/" type="button" handleClick={() => {}} />
-      </> */}
+      </>
     </div>
   );
 }

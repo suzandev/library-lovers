@@ -29,7 +29,7 @@ export default function AppButton({
 
 AppButton.propTypes = {
   title: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
+  to: PropTypes.string,
   transparent: PropTypes.bool,
   type: PropTypes.string,
   handleClick: PropTypes.func,

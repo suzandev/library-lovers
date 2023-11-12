@@ -10,5 +10,5 @@ export default function LoginBg({ title }) {
 }
 
 LoginBg.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
 };
