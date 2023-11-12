@@ -7,6 +7,7 @@ import Environment from "./pages/Environment";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import CategoryBooks from "./pages/CategoryBooks";
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
         >
           <Route path="/add-book" element={<h1>Add Book</h1>} />
           <Route path="/all-books" element={<AllBooks />} />
-          <Route path="/books/:category" element={<h1>Category Books</h1>} />
+          <Route path="/books/:category" element={<CategoryBooks />} />
           <Route path="/borrowed-Books" element={<BorrowedBooks />} />
           <Route path="/book-details" element={<h1>Book details</h1>} />
           <Route path="/book-reading" element={<h1>Book reading</h1>} />
