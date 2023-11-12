@@ -10,7 +10,7 @@ export default function TestimonialCard() {
           value={5}
           edit={false}
           size={24}
-          activeColor="#ffd700"
+          activeColor="#32cb81"
         />
       </div>
       <p>

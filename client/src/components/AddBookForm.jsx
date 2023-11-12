@@ -15,7 +15,7 @@ export default function AddBookForm() {
   } = useForm();
 
   function handleAddBook(values) {
-    console.log(values);
+    console.log(values.image);
   }
 
   return (

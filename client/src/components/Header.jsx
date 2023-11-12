@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { HiOutlineBars3CenterLeft } from "react-icons/hi2";
 import AuthButtons from "./AuthButtons";
+import DarkThemeToggler from "./DarkThemeToggler";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 import SmallDeviceNav from "./SmallDeviceNav";
@@ -13,13 +14,21 @@ export default function Header() {
           <Logo />
           <Navigation />
           {showNav && <SmallDeviceNav handleClose={() => setShowNav(false)} />}
-          <AuthButtons />
-          <button
-            onClick={() => setShowNav(true)}
-            className="text-brand-green md:hidden"
-          >
-            <HiOutlineBars3CenterLeft className="text-3xl" />
-          </button>
+          <div className="flex items-center gap-4 max-md:hidden">
+            <AuthButtons />
+            <DarkThemeToggler />
+          </div>
+
+          <div className="flex items-center gap-4 md:hidden">
+            <button
+              onClick={() => setShowNav(true)}
+              className="text-brand-green md:hidden"
+            >
+              <HiOutlineBars3CenterLeft className="text-3xl" />
+            </button>
+
+            <DarkThemeToggler />
+          </div>
         </div>
       </div>
     </header>

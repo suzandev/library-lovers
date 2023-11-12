@@ -32,8 +32,8 @@ export default function FormBody({
 
 FormBody.propTypes = {
   children: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
-  linkTitle: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  linkTitle: PropTypes.string,
+  to: PropTypes.string,
   footerGuid: PropTypes.string,
 };
