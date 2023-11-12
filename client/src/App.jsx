@@ -1,5 +1,5 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import AppLayout from "./components/Applayout";
+import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AddBook from "./pages/AddBook";
 import AllBooks from "./pages/AllBooks";
@@ -33,7 +33,7 @@ function App() {
           }
         >
           <Route path="/add-book" element={<AddBook />} />
-          <Route path="/edit/:id" element={<AddBook editBook={true} />} />
+          <Route path="/books/edit/:id" element={<AddBook editBook={true} />} />
           <Route path="/all-books" element={<AllBooks />} />
           <Route path="/books/:category" element={<h1>Category Books</h1>} />
           <Route path="/borrowed-Books" element={<BorrowedBooks />} />
@@ -41,6 +41,15 @@ function App() {
           <Route path="/book-reading" element={<h1>Book reading</h1>} />
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
+
+        <Route
+          path="*"
+          element={
+            <AppLayout>
+              <h1>Ops this page not found</h1>
+            </AppLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

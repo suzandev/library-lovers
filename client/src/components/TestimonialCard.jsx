@@ -1,7 +1,18 @@
+import ReactStars from "react-rating-stars-component";
+
 export default function TestimonialCard() {
   return (
     <div className="bg-brand-white w-full space-y-6 p-4 md:max-w-sm">
-      <div>STARS</div>
+      <div>
+        <ReactStars
+          count={5}
+          half={true}
+          value={5}
+          edit={false}
+          size={24}
+          activeColor="#ffd700"
+        />
+      </div>
       <p>
         Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod
         tempor ut labore.
