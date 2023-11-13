@@ -3,6 +3,7 @@ import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AddBook from "./pages/AddBook";
 import AllBooks from "./pages/AllBooks";
+import BookDetails from "./pages/BookDetails";
 import BorrowedBooks from "./pages/BorrowedBooks";
 import Environment from "./pages/Environment";
 import Home from "./pages/Home";
@@ -35,9 +36,9 @@ function App() {
           <Route path="/add-book" element={<AddBook />} />
           <Route path="/books/edit/:id" element={<AddBook editBook={true} />} />
           <Route path="/all-books" element={<AllBooks />} />
-          <Route path="/books/:category" element={<h1>Category Books</h1>} />
+          <Route path="/books/:category" element={<AllBooks />} />
           <Route path="/borrowed-Books" element={<BorrowedBooks />} />
-          <Route path="/books/details/:id" element={<h1>Book details</h1>} />
+          <Route path="/books/details/:id" element={<BookDetails />} />
           <Route path="/book-reading" element={<h1>Book reading</h1>} />
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
