@@ -49,7 +49,7 @@ export default function Details() {
               }}
             />
 
-            <AppButton title="Read" to="/" />
+            <AppButton title="Read" to={`/books/reading/${book.id}`} />
           </div>
         </div>
       </div>

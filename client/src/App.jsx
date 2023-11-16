@@ -39,7 +39,7 @@ function App() {
           <Route path="/books/:category" element={<AllBooks />} />
           <Route path="/borrowed-Books" element={<BorrowedBooks />} />
           <Route path="/books/details/:id" element={<BookDetails />} />
-          <Route path="/book-reading" element={<h1>Book reading</h1>} />
+          <Route path="/books/reading/:id" element={<Environment />} />
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
 

@@ -34,6 +34,9 @@ export default function BookCard({ book, type }) {
         </div>
         <div className="mt-6 flex items-center justify-between">
           <AppButton to={`/books/details/${book.id}`} title="Details" />
+
+          {/* This button will show if user role is librarian */}
+          {/* <AppButton to={`/books/edit/${book.id}`} title="Update" /> */}
         </div>
       </div>
     </div>
