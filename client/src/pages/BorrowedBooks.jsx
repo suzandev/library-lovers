@@ -1,4 +1,5 @@
 import BookCard from "../components/BookCard";
+import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
 import { sliderContent } from "../constant";
 
@@ -17,6 +18,9 @@ export default function BorrowedBooks() {
           {sliderContent.map((category) => (
             <BookCard key={category.name} book={category} type="book" />
           ))}
+        </div>
+        <div className="flex justify-end">
+          <Pagination />
         </div>
       </div>
     </section>
