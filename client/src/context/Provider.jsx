@@ -1,6 +1,6 @@
 import axios from "axios";
 import PropTypes from "prop-types";
-import { createContext, useReducer } from "react";
+import { createContext, useEffect, useReducer } from "react";
 import { LOGOUT_USER } from "./actions";
 import reducer, { initialState } from "./reducer";
 
@@ -10,7 +10,7 @@ export default function Provider({ children }) {
 
   // axios
   const authFetch = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: "/api/v1/",
   });
 
   // response/request
@@ -19,7 +19,6 @@ export default function Provider({ children }) {
       return response;
     },
     (error) => {
-      // console.log(error.response)
       if (error.response.status === 401) {
         logoutUser();
       }
@@ -27,10 +26,21 @@ export default function Provider({ children }) {
     },
   );
 
+  const getCurrentUser = async () => {
+    const { data } = await authFetch.get("/auth/user/me");
+
+    console.log(data);
+  };
+
   const logoutUser = async () => {
     await authFetch.post("/auth/logout");
     dispatch({ type: LOGOUT_USER });
   };
+
+  useEffect(() => {
+    getCurrentUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AppContext.Provider value={{ ...state, logoutUser }}>

@@ -33,13 +33,13 @@ const limit = rateLimit({
 });
 
 // middleware
-app.use(cors());
 app.use(express.json());
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
+    cookie: { secure: false },
   })
 );
 app.use(passport.initialize());
@@ -61,6 +61,16 @@ async function run() {
     await client.connect();
     const userCollection = client.db("library-lover").collection("user");
 
+    // Middleware functions
+    function isLoggedIn(req, res, next) {
+      if (req.isAuthenticated()) {
+        return next();
+      }
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        message: "Unauthorized",
+      });
+    }
+
     // Passport login route
     app.get(
       "/auth/google",
@@ -80,27 +90,19 @@ async function run() {
       });
     });
 
-    app.get("/auth/user/me", (req, res) => {
-      if (req.user) {
-        res.status(StatusCodes.OK).json({
-          user: req.user,
-        });
-      } else {
-        res.status(StatusCodes.UNAUTHORIZED).json({
-          message: "please login",
-        });
-      }
+    app.get("/api/v1/auth/user/me", isLoggedIn, (req, res) => {
+      res.set("Content-Type", "text/html");
+      res.status(StatusCodes.OK).json({
+        user: req.user,
+      });
     });
 
-    app.post("/auth/logout", (req, res, next) => {
+    app.post("/api/v1/auth/logout", (req, res) => {
       req.logout((err) => {
         if (err)
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: "something went wrong!",
           });
-      });
-      res.status(StatusCodes.OK).json({
-        message: "user logged out",
       });
     });
   } catch (error) {

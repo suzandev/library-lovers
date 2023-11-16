@@ -43,22 +43,10 @@ passport.use(
   )
 );
 
-passport.serializeUser(function (user, done) {
-  done(null, user);
+passport.serializeUser(function (user, cb) {
+  cb(null, user);
 });
 
-passport.deserializeUser(async function (id, done) {
-  try {
-    await client.connect();
-    const userCollection = client.db("library-lover").collection("user");
-    const user = await userCollection.findOne({
-      _id: id,
-    });
-
-    done(null, user);
-  } catch (error) {
-    console.error("Error connect to database", error);
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
+passport.deserializeUser(async function (user, cb) {
+  cb(null, user);
 });
