@@ -92,8 +92,8 @@ async function run() {
       }
     });
 
-    app.get("/auth/logout", (req, res) => {
-      req.logout({}, (err) => {
+    app.post("/auth/logout", (req, res, next) => {
+      req.logout((err) => {
         if (err)
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: "something went wrong!",

@@ -30,6 +30,7 @@ passport.use(
             email: profile._json.email,
             picture: profile._json.picture,
             _id: profile.id,
+            role: "user",
           });
           return cb(null, user);
         }

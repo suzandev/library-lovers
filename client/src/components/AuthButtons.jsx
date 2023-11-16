@@ -1,7 +1,12 @@
+import axios from "axios";
 import PropTypes from "prop-types";
 import AppButton from "./AppButton";
 
 export default function AuthButtons({ smallDev }) {
+  async function logout() {
+    await axios.post("http://localhost:3000/auth/logout");
+  }
+
   return (
     <div
       className={`${
@@ -10,10 +15,10 @@ export default function AuthButtons({ smallDev }) {
     >
       <AppButton title="Login" to="/login" />
 
-      {/* <>
+      <>
         <AppButton title="Add" to="/add-book" />
-        <AppButton title="Logout" to="/" type="button" handleClick={() => {}} />
-      </> */}
+        <AppButton title="Logout" to="/" type="button" handleClick={logout} />
+      </>
     </div>
   );
 }
