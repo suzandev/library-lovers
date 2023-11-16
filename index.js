@@ -99,7 +99,9 @@ async function run() {
             message: "something went wrong!",
           });
       });
-      res.redirect(origin);
+      res.status(StatusCodes.OK).json({
+        message: "user logged out",
+      });
     });
   } catch (error) {
     console.error("Error connect to database", error);
