@@ -12,6 +12,7 @@ import morgan from "morgan";
 import passport from "passport";
 import * as path from "path";
 import client from "./database.js";
+import "./passport.js";
 
 dotenv.config();
 const origin = "http://localhost:5173";
