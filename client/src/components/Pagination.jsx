@@ -61,12 +61,16 @@ export default function Pagination() {
             currentPage === page
               ? "text-brand-green bg-brand-white"
               : "bg-brand-green text-white"
-          } grid h-10 w-10 place-items-center`}
+          } grid h-10 w-10 place-items-center max-md:hidden`}
           onClick={() => randomPage(page)}
         >
           {page}
         </button>
       ))}
+
+      <div className="hidden max-md:block">
+        <span className="text-brand-green">{currentPage}</span> of {totalPages}
+      </div>
 
       <button
         className="bg-brand-green grid h-10 w-10 place-items-center text-white"
