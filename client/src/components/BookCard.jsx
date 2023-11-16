@@ -10,7 +10,7 @@ export default function BookCard({ book, type }) {
         <img src={book.image} alt={book.name} className="w-full object-cover" />
       </div>
       <div className="p-4">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-wrap items-start justify-between">
           <div className="flex-1 space-y-2">
             <h5 className="text-brand-text text-xs">{book.author}</h5>
             <h3 className="text-brand-text text-lg font-bold max-sm:text-sm">
@@ -34,6 +34,9 @@ export default function BookCard({ book, type }) {
         </div>
         <div className="mt-6 flex items-center justify-between">
           <AppButton to={`/books/details/${book.id}`} title="Details" />
+
+          {/* This button will show if user role is librarian */}
+          {/* <AppButton to={`/books/edit/${book.id}`} title="Update" /> */}
         </div>
       </div>
     </div>
