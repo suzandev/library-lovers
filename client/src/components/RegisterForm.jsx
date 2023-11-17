@@ -1,29 +1,35 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../hooks/useAppContext";
+import ErrorMsg from "./ErrorMsg";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function RegisterForm() {
   const {
     register,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
   } = useForm();
+  const { registerUser, error, registerIsLoading, registerIsError } =
+    useAppContext();
+  const navigate = useNavigate();
 
   function handleRegister(values) {
-    const { fullName, email, password } = values;
-    console.log(values);
+    const { name, email, password } = values;
+    registerUser({ name, email, password }, reset, navigate);
   }
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleRegister)}>
-      <FormRow label="Username" id="username" errors={errors}>
+      <FormRow label="Name" id="name" errors={errors}>
         <Input
           type="text"
-          id="username"
-          form={register("username", {
+          id="name"
+          form={register("name", {
             required: "Please tell us your user name",
             min: 2,
             max: 50,
@@ -57,7 +63,16 @@ export default function RegisterForm() {
           })}
         />
       </FormRow>
-      <FormButton type="submit">Register</FormButton>
+
+      {registerIsError && (
+        <div className="mb-4">
+          <ErrorMsg label="Error">{error}</ErrorMsg>{" "}
+        </div>
+      )}
+
+      <FormButton type="submit" loading={registerIsLoading}>
+        Register {registerIsLoading && <LoadingSpinner />}
+      </FormButton>
     </form>
   );
 }

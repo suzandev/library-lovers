@@ -1,21 +1,36 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { categoryOptions } from "../constant";
+import { useAppContext } from "../hooks/useAppContext";
+import ErrorMsg from "./ErrorMsg";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
+import LoadingSpinner from "./LoadingSpinner";
 import SelectOptions from "./SelectOptions";
 
 export default function AddBookForm() {
   const {
     register,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
   } = useForm();
+  const { postBook, postBookIsLoading, postBookIsError, error } =
+    useAppContext();
+  const navigate = useNavigate();
 
   function handleAddBook(values) {
-    console.log(values.image);
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("author", values.author);
+    formData.append("description", values.short_description);
+    formData.append("image", values.image[0]);
+    formData.append("category", values.category);
+    formData.append("rating", parseInt(values.rating));
+    formData.append("quantity", parseInt(values.quantity));
+
+    postBook(formData, reset, navigate);
   }
 
   return (
@@ -119,7 +134,15 @@ export default function AddBookForm() {
         />
       </FormRow>
 
-      <FormButton type="submit">Add book</FormButton>
+      {postBookIsError && (
+        <div className="mb-4">
+          <ErrorMsg label="Error">{error}</ErrorMsg>
+        </div>
+      )}
+
+      <FormButton type="submit" loading={postBookIsLoading}>
+        Add book {postBookIsLoading && <LoadingSpinner />}
+      </FormButton>
     </form>
   );
 }

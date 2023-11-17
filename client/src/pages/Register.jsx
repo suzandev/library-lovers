@@ -1,4 +1,5 @@
 import FormBody from "../components/FormBody";
+import GoogleButton from "../components/GoogleButton";
 import LoginBg from "../components/LoginBg";
 import RegisterForm from "../components/RegisterForm";
 
@@ -14,6 +15,7 @@ export default function Register() {
         to="/login"
       >
         <RegisterForm />
+        <GoogleButton title="Sign up" />
       </FormBody>
     </section>
   );

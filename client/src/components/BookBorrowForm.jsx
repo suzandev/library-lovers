@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
@@ -24,7 +23,7 @@ export default function BookBorrowForm() {
       {/* if there is a button in form, it will close the modal */}
       <button
         type="button"
-        className="btn btn-sm btn-circle btn-ghost text-brand-green absolute right-2 top-2"
+        className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2 text-brand-green"
         onClick={() => document.getElementById("my_modal_1").close()}
       >
         ✕
