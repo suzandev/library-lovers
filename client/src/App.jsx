@@ -22,8 +22,7 @@ function App() {
             </AppLayout>
           }
         />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
         <Route
           element={
             <ProtectedRoute>
@@ -42,6 +41,9 @@ function App() {
           <Route path="/books/reading/:id" element={<Environment />} />
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         <Route
           path="*"
