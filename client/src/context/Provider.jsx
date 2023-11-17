@@ -100,7 +100,7 @@ export default function Provider({ children }) {
     dispatch({ type: GET_BOOKS_LOADING });
     try {
       const { data } = await authFetch.get("/books");
-      dispatch({ type: SET_BOOKS, payload: data?.books });
+      dispatch({ type: SET_BOOKS, payload: data });
     } catch (error) {
       console.error(error);
       dispatch({
