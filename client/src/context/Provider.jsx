@@ -1,7 +1,7 @@
 import axios from "axios";
 import PropTypes from "prop-types";
 import { createContext, useEffect, useReducer } from "react";
-import { LOGOUT_USER } from "./actions";
+import { ERROR, LOGOUT_USER, SET_USER } from "./actions";
 import reducer, { initialState } from "./reducer";
 
 export const AppContext = createContext();
@@ -27,9 +27,15 @@ export default function Provider({ children }) {
   );
 
   const getCurrentUser = async () => {
-    const { data } = await authFetch.get("/auth/user/me");
+    dispatch({ type: SET_USER });
+    try {
+      const { data } = await authFetch.get("/auth/user/me");
 
-    console.log(data);
+      dispatch({ type: SET_USER, payload: data?.user });
+    } catch (error) {
+      console.error(error.response.data.message);
+      dispatch({ type: ERROR, payload: error.response.data.message });
+    }
   };
 
   const logoutUser = async () => {
@@ -39,6 +45,7 @@ export default function Provider({ children }) {
 
   useEffect(() => {
     getCurrentUser();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

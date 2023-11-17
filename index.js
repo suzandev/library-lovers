@@ -22,8 +22,8 @@ const app = express();
 app.set("trust proxy", 1);
 
 // only when ready to deploy
-const dirname = path.dirname(process.argv[1]);
-app.use(express.static(path.resolve(dirname, "./client/dist")));
+// const dirname = path.dirname(process.argv[1]);
+// app.use(express.static(path.resolve(dirname, "./client/dist")));
 
 // Limit request from same api
 const limit = rateLimit({
@@ -103,6 +103,10 @@ async function run() {
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: "something went wrong!",
           });
+
+        res.status(StatusCodes.OK).json({
+          message: "Unauthorized",
+        });
       });
     });
   } catch (error) {
