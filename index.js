@@ -10,6 +10,7 @@ import helmet from "helmet";
 import hpp from "hpp";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
 import morgan from "morgan";
 import passport from "passport";
 import * as path from "path";
@@ -67,12 +68,9 @@ async function run() {
     const sendToken = (id, res) => {
       const oneDay = 1000 * 60 * 60 * 24;
 
-      console.log(process.env.JWT_LIFETIME, process.env.JWT_SECRET);
-
       const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
-        expiresIn: "10h",
+        expiresIn: process.env.JWT_LIFETIME,
       });
-
       res.cookie("token", token, {
         httpOnly: true,
         expires: new Date(Date.now() + oneDay),
@@ -84,14 +82,14 @@ async function run() {
       await bcrypt.compare(password, hashedPassword);
 
     // Middleware functions
-    function isLoggedIn(req, res, next) {
-      console.log(req.cookies);
+    async function isLoggedIn(req, res, next) {
       const token = req.cookies.token;
 
       if (token) {
         try {
           const payload = jwt.verify(token, process.env.JWT_SECRET);
-          req.user.userId = payload.userId;
+          req.user = { userId: payload.userId };
+
           return next();
         } catch (error) {
           return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -131,13 +129,23 @@ async function run() {
     // User auth routes
     app.get("/api/v1/auth/user/me", isLoggedIn, async (req, res) => {
       const loggedUser = await userCollection.findOne({
-        _id: req.user.userId,
+        _id: new ObjectId(req.user.userId),
       });
 
-      const user = req.user.email ? req.user : loggedUser;
+      if (!loggedUser) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "The use belongs to this token does not exist!",
+        });
+      }
 
+      const user = req.user.email ? req.user : loggedUser;
       res.status(StatusCodes.OK).json({
-        user,
+        user: {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          picture: user.picture,
+        },
       });
     });
 
@@ -179,7 +187,6 @@ async function run() {
 
     app.post("/api/v1/auth/login", async (req, res) => {
       const { email, password } = req.body;
-      console.log(req.body);
       if (!email || !password) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           message: "All fields are required",
@@ -220,10 +227,10 @@ async function run() {
             message: "something went wrong!",
           });
 
-        // res.cookie("token", "logout", {
-        //   httpOnly: true,
-        //   expires: new Date(Date.now()),
-        // });
+        res.cookie("token", "logout", {
+          httpOnly: true,
+          expires: new Date(Date.now()),
+        });
 
         res.status(StatusCodes.OK).json({
           message: "Unauthorized",

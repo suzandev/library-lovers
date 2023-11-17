@@ -31,7 +31,6 @@ export default function Provider({ children }) {
     },
     (error) => {
       if (error.response.status === 401) {
-        toast.error("Unauthorize");
         logoutUser();
       }
       return Promise.reject(error);
@@ -42,7 +41,6 @@ export default function Provider({ children }) {
     dispatch({ type: GET_USER_LOADING });
     try {
       const { data } = await authFetch.get("/auth/user/me");
-      console.log(data);
       dispatch({ type: SET_USER, payload: data?.user });
     } catch (error) {
       console.error(error.response.data.message);
