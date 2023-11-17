@@ -4,6 +4,8 @@ import { createContext, useEffect, useReducer } from "react";
 import toast from "react-hot-toast";
 
 import {
+  GET_BOOKS_ERROR,
+  GET_BOOKS_LOADING,
   GET_USER_ERROR,
   GET_USER_LOADING,
   LOGIN_USER_ERROR,
@@ -11,6 +13,7 @@ import {
   LOGOUT_USER,
   REGISTER_USER_ERROR,
   REGISTER_USER_LOADING,
+  SET_BOOKS,
   SET_USER,
 } from "./actions";
 import reducer, { initialState } from "./reducer";
@@ -91,9 +94,24 @@ export default function Provider({ children }) {
 
   // Books
   const getBooks = async () => {
+    dispatch({ type: GET_BOOKS_LOADING });
     try {
       const { data } = await authFetch.get("/books");
-      return data;
+      dispatch({ type: SET_BOOKS, payload: data?.books });
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: GET_BOOKS_ERROR,
+        payload: error.response.data.message || error.response.data,
+      });
+    }
+  };
+
+  const postBook = async (body) => {
+    try {
+      const { data } = await authFetch.post("/books", body);
+      getBooks();
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -106,7 +124,14 @@ export default function Provider({ children }) {
 
   return (
     <AppContext.Provider
-      value={{ ...state, logoutUser, registerUser, loginUser, getBooks }}
+      value={{
+        ...state,
+        logoutUser,
+        registerUser,
+        loginUser,
+        getBooks,
+        postBook,
+      }}
     >
       {children}
     </AppContext.Provider>

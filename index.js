@@ -240,7 +240,7 @@ async function run() {
     });
 
     // Books routes
-    app.post("/api/v1/books", async (req, res) => {
+    app.post("/api/v1/books", isLoggedIn, async (req, res) => {
       const { title, author, description, image, category, rating } = req.body;
       const newBook = await bookCollection.insertOne({
         title,
@@ -263,12 +263,12 @@ async function run() {
       });
     });
 
-    app.get("/api/v1/books", async (req, res) => {
+    app.get("/api/v1/books", isLoggedIn, async (req, res) => {
       const books = await bookCollection.find({}).toArray();
       res.status(StatusCodes.OK).json(books);
     });
 
-    app.get("/api/v1/books/:id", async (req, res) => {
+    app.get("/api/v1/books/:id", isLoggedIn, async (req, res) => {
       const { id } = req.params;
       const book = await bookCollection.findOne({ _id: new ObjectId(id) });
       if (!book) {
@@ -281,7 +281,7 @@ async function run() {
       });
     });
 
-    app.patch("/api/v1/books/:id", async (req, res) => {
+    app.patch("/api/v1/books/:id", isLoggedIn, async (req, res) => {
       const { id } = req.params;
       const { title, author, description, image, category } = req.body;
       const book = await bookCollection.updateOne(
@@ -308,7 +308,7 @@ async function run() {
       });
     });
 
-    app.delete("/api/v1/books/:id", async (req, res) => {
+    app.delete("/api/v1/books/:id", isLoggedIn, async (req, res) => {
       const { id } = req.params;
       const book = await bookCollection.deleteOne({ _id: new ObjectId(id) });
       if (!book) {

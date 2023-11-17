@@ -12,7 +12,8 @@ export default function AllBooks() {
 
   useEffect(() => {
     getBooks();
-  }, [getBooks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section>
@@ -26,10 +27,11 @@ export default function AllBooks() {
           <AvailableBooksToggler />
         </div>
 
-        {getBooksIsLoading && <div>Loading....</div>}
-        {getBooksIsError && <div>{error}</div>}
-
-        {!getBooksIsLoading && !getBooksIsError && books.length > 0 ? (
+        {getBooksIsLoading ? (
+          <div>Loading</div>
+        ) : getBooksIsError ? (
+          <div>{error}</div>
+        ) : books?.length > 0 ? (
           <>
             <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
               {sliderContent.map((category) => (
