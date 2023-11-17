@@ -63,6 +63,7 @@ async function run() {
     // Connect the client to the server)
     await client.connect();
     const userCollection = client.db("library-lover").collection("user");
+    const bookCollection = client.db("library-lover").collection("book");
 
     // Utils functions
     const sendToken = (id, res) => {
@@ -235,6 +236,88 @@ async function run() {
         res.status(StatusCodes.OK).json({
           message: "Unauthorized",
         });
+      });
+    });
+
+    // Books routes
+    app.post("/api/v1/books", async (req, res) => {
+      const { title, author, description, image, category, rating } = req.body;
+      const newBook = await bookCollection.insertOne({
+        title,
+        author,
+        description,
+        image,
+        category,
+        rating,
+      });
+      res.status(StatusCodes.CREATED).json({
+        book: {
+          id: newBook.insertedId,
+          title,
+          author,
+          description,
+          image,
+          category,
+          rating,
+        },
+      });
+    });
+
+    app.get("/api/v1/books", async (req, res) => {
+      const books = await bookCollection.find({}).toArray();
+      res.status(StatusCodes.OK).json(books);
+    });
+
+    app.get("/api/v1/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const book = await bookCollection.findOne({ _id: new ObjectId(id) });
+      if (!book) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Book not found",
+        });
+      }
+      res.status(StatusCodes.OK).json({
+        book,
+      });
+    });
+
+    app.patch("/api/v1/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const { title, author, description, image, category } = req.body;
+      const book = await bookCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            title,
+            author,
+            description,
+            image,
+            category,
+          },
+        }
+      );
+
+      if (!book) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Book not found",
+        });
+      }
+
+      res.status(StatusCodes.OK).json({
+        message: "Book updated successfully",
+      });
+    });
+
+    app.delete("/api/v1/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const book = await bookCollection.deleteOne({ _id: new ObjectId(id) });
+      if (!book) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Book not found",
+        });
+      }
+      res.status(StatusCodes.OK).json({
+        message: "Book deleted successfully",
       });
     });
   } catch (error) {
