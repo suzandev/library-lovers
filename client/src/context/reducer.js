@@ -1,4 +1,6 @@
 import {
+  GET_BOOKS_ERROR,
+  GET_BOOKS_LOADING,
   GET_USER_ERROR,
   GET_USER_LOADING,
   LOGIN_USER_ERROR,
@@ -6,20 +8,24 @@ import {
   LOGOUT_USER,
   REGISTER_USER_ERROR,
   REGISTER_USER_LOADING,
+  SET_BOOKS,
   SET_USER,
 } from "./actions";
 
 export const initialState = {
   user: null,
   error: null,
+  books: [],
 
   registerIsLoading: false,
   loginIsLoading: false,
   getUserIsLoading: false,
+  getBooksIsLoading: false,
 
   registerIsError: false,
   loginIsError: false,
   getUserIsError: false,
+  getBooksIsError: false,
 };
 
 function reducer(state, action) {
@@ -34,6 +40,11 @@ function reducer(state, action) {
       return {
         ...state,
         getUserIsLoading: true,
+      };
+    case GET_BOOKS_LOADING:
+      return {
+        ...state,
+        getBooksIsLoading: true,
       };
 
     case REGISTER_USER_ERROR:
@@ -51,6 +62,13 @@ function reducer(state, action) {
         getUserIsLoading: false,
         error: action.payload,
       };
+    case GET_BOOKS_ERROR:
+      return {
+        ...state,
+        getBooksIsLoading: false,
+        getBooksIsError: true,
+        error: action.payload,
+      };
 
     case SET_USER:
       return {
@@ -63,6 +81,14 @@ function reducer(state, action) {
         getUserIsError: false,
         error: null,
         user: action.payload,
+      };
+    case SET_BOOKS:
+      return {
+        ...state,
+        getBooksIsLoading: false,
+        getBooksIsError: false,
+        error: null,
+        books: action.payload,
       };
 
     case LOGOUT_USER:

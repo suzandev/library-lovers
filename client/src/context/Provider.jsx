@@ -37,6 +37,7 @@ export default function Provider({ children }) {
     },
   );
 
+  // Authentication
   const getCurrentUser = async () => {
     dispatch({ type: GET_USER_LOADING });
     try {
@@ -88,15 +89,24 @@ export default function Provider({ children }) {
     dispatch({ type: LOGOUT_USER });
   };
 
+  // Books
+  const getBooks = async () => {
+    try {
+      const { data } = await authFetch.get("/books");
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <AppContext.Provider
-      value={{ ...state, logoutUser, registerUser, loginUser }}
+      value={{ ...state, logoutUser, registerUser, loginUser, getBooks }}
     >
       {children}
     </AppContext.Provider>

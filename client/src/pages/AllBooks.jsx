@@ -1,10 +1,19 @@
+import { useEffect } from "react";
 import AvailableBooksToggler from "../components/AvailableBooksToggler";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
 import { sliderContent } from "../constant";
+import { useAppContext } from "../hooks/useAppContext";
 
 export default function AllBooks() {
+  const { getBooks, books, getBooksIsLoading, getBooksIsError, error } =
+    useAppContext();
+
+  useEffect(() => {
+    getBooks();
+  }, [getBooks]);
+
   return (
     <section>
       <div className="my-6">
@@ -16,14 +25,25 @@ export default function AllBooks() {
           />
           <AvailableBooksToggler />
         </div>
-        <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {sliderContent.map((category) => (
-            <BookCard key={category.name} book={category} type="book" />
-          ))}
-        </div>
-        <div className="flex justify-end">
-          <Pagination />
-        </div>
+
+        {getBooksIsLoading && <div>Loading....</div>}
+        {getBooksIsError && <div>{error}</div>}
+
+        {!getBooksIsLoading && !getBooksIsError && books.length > 0 ? (
+          <>
+            <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              {sliderContent.map((category) => (
+                <BookCard key={category.name} book={category} type="book" />
+              ))}
+            </div>
+
+            <div className="flex justify-end">
+              <Pagination />
+            </div>
+          </>
+        ) : (
+          <div>No books</div>
+        )}
       </div>
     </section>
   );
