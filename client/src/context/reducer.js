@@ -1,6 +1,8 @@
 import {
   GET_BOOKS_ERROR,
   GET_BOOKS_LOADING,
+  GET_BOOK_ERROR,
+  GET_BOOK_LOADING,
   GET_USER_ERROR,
   LOGIN_USER_ERROR,
   LOGIN_USER_LOADING,
@@ -9,6 +11,7 @@ import {
   POST_BOOK_LOADING,
   REGISTER_USER_ERROR,
   REGISTER_USER_LOADING,
+  SET_BOOK,
   SET_BOOKS,
   SET_USER,
 } from "./actions";
@@ -22,12 +25,14 @@ export const initialState = {
   loginIsLoading: false,
   getUserIsLoading: true,
   getBooksIsLoading: false,
+  getBookIsLoading: false,
   postBookIsLoading: false,
 
   registerIsError: false,
   loginIsError: false,
   getUserIsError: false,
   getBooksIsError: false,
+  getBookIsError: false,
   postBookIsError: false,
 };
 
@@ -43,6 +48,11 @@ function reducer(state, action) {
       return {
         ...state,
         getBooksIsLoading: true,
+      };
+    case GET_BOOK_LOADING:
+      return {
+        ...state,
+        getBookIsLoading: true,
       };
     case POST_BOOK_LOADING:
       return {
@@ -70,6 +80,13 @@ function reducer(state, action) {
         ...state,
         getBooksIsLoading: false,
         getBooksIsError: true,
+        error: action.payload,
+      };
+    case GET_BOOK_ERROR:
+      return {
+        ...state,
+        getBookIsLoading: false,
+        getBookIsError: true,
         error: action.payload,
       };
     case POST_BOOK_ERROR:
@@ -101,6 +118,14 @@ function reducer(state, action) {
         postBookIsError: false,
         error: null,
         books: action.payload,
+      };
+    case SET_BOOK:
+      return {
+        ...state,
+        getBookIsLoading: false,
+        getBookIsError: false,
+        error: null,
+        book: action.payload,
       };
 
     case LOGOUT_USER:

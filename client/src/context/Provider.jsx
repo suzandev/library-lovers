@@ -127,6 +127,15 @@ export default function Provider({ children }) {
     }
   };
 
+  const getBook = async (id) => {
+    try {
+      const { data } = await authFetch.get(`/books/${id}`);
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getCurrentUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,6 +149,7 @@ export default function Provider({ children }) {
         registerUser,
         loginUser,
         getBooks,
+        getBook,
         postBook,
       }}
     >

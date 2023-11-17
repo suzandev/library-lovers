@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import ReactStars from "react-rating-stars-component";
 import { Link } from "react-router-dom";
+import { useAppContext } from "../hooks/useAppContext";
 import AppButton from "./AppButton";
 
 export default function BookCard({ book, type }) {
+  const { user } = useAppContext();
   return type === "book" ? (
     <div className="bg-brand-white shadow-md">
       <div className="h-60 w-full overflow-hidden">
@@ -40,7 +42,9 @@ export default function BookCard({ book, type }) {
           <AppButton to={`/books/details/${book._id}`} title="Details" />
 
           {/* This button will show if user role is librarian */}
-          {/* <AppButton to={`/books/edit/${book.id}`} title="Update" /> */}
+          {user?.role === "librarian" && (
+            <AppButton to={`/books/edit/${book.id}`} title="Update" />
+          )}
         </div>
       </div>
     </div>
