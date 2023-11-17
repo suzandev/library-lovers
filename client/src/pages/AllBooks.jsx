@@ -3,7 +3,6 @@ import AvailableBooksToggler from "../components/AvailableBooksToggler";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
-import { sliderContent } from "../constant";
 import { useAppContext } from "../hooks/useAppContext";
 
 export default function AllBooks() {
@@ -34,8 +33,8 @@ export default function AllBooks() {
         ) : books?.length > 0 ? (
           <>
             <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              {sliderContent.map((category) => (
-                <BookCard key={category.name} book={category} type="book" />
+              {books.map((book) => (
+                <BookCard key={book._id} book={book} type="book" />
               ))}
             </div>
 
