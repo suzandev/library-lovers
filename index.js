@@ -80,9 +80,8 @@ async function run() {
       });
     };
 
-    const passwordCompare = async (password, hashedPassword) => {
-      return await bcrypt.compare(password, hashedPassword);
-    };
+    const passwordCompare = async (password, hashedPassword) =>
+      await bcrypt.compare(password, hashedPassword);
 
     // Middleware functions
     function isLoggedIn(req, res, next) {
@@ -180,6 +179,7 @@ async function run() {
 
     app.post("/api/v1/auth/login", async (req, res) => {
       const { email, password } = req.body;
+      console.log(req.body);
       if (!email || !password) {
         return res.status(StatusCodes.BAD_REQUEST).json({
           message: "All fields are required",
@@ -196,9 +196,9 @@ async function run() {
         });
       }
 
-      if (!(await passwordCompare(passport, user.password))) {
+      if (!(await passwordCompare(password, user.password))) {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "Invalid credentials",
+          message: "Email or password is incorrect",
         });
       }
 

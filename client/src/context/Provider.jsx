@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import {
   GET_USER_ERROR,
   GET_USER_LOADING,
+  LOGIN_USER_ERROR,
+  LOGIN_USER_LOADING,
   LOGOUT_USER,
   REGISTER_USER_ERROR,
   REGISTER_USER_LOADING,
@@ -65,6 +67,24 @@ export default function Provider({ children }) {
     }
   };
 
+  const loginUser = async (body, resetForm, navigate) => {
+    dispatch({ type: LOGIN_USER_LOADING });
+
+    try {
+      const { data } = await authFetch.post("/auth/login", body);
+      dispatch({ type: SET_USER, payload: data?.user });
+      resetForm();
+      navigate("/");
+      toast.success("Successfully logged in!");
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: LOGIN_USER_ERROR,
+        payload: error.response.data.message,
+      });
+    }
+  };
+
   const logoutUser = async () => {
     await authFetch.post("/auth/logout");
     dispatch({ type: LOGOUT_USER });
@@ -77,7 +97,9 @@ export default function Provider({ children }) {
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, logoutUser, registerUser }}>
+    <AppContext.Provider
+      value={{ ...state, logoutUser, registerUser, loginUser }}
+    >
       {children}
     </AppContext.Provider>
   );

@@ -1,20 +1,25 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../hooks/useAppContext";
+import ErrorMsg from "./ErrorMsg";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function LoginForm() {
   const {
     register,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
   } = useForm();
+  const { loginUser, error, loginIsLoading, loginIsError } = useAppContext();
+  const navigate = useNavigate();
 
   function handleLogin(values) {
     const { email, password } = values;
-    console.log(values);
+    loginUser({ email, password }, reset, navigate);
   }
 
   return (
@@ -41,7 +46,16 @@ export default function LoginForm() {
           })}
         />
       </FormRow>
-      <FormButton type="submit">Login</FormButton>
+
+      {loginIsError && (
+        <div className="mb-4">
+          <ErrorMsg label="Error">{error}</ErrorMsg>
+        </div>
+      )}
+
+      <FormButton type="submit" loading={loginIsLoading}>
+        Login {loginIsLoading && <LoadingSpinner />}
+      </FormButton>
     </form>
   );
 }

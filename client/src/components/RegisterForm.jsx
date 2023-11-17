@@ -63,9 +63,13 @@ export default function RegisterForm() {
           })}
         />
       </FormRow>
-      <div className="mb-4">
-        {registerIsError && <ErrorMsg label="Error">{error}</ErrorMsg>}
-      </div>
+
+      {registerIsError && (
+        <div className="mb-4">
+          <ErrorMsg label="Error">{error}</ErrorMsg>{" "}
+        </div>
+      )}
+
       <FormButton type="submit" loading={registerIsLoading}>
         Register {registerIsLoading && <LoadingSpinner />}
       </FormButton>
