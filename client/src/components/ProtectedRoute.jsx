@@ -3,9 +3,11 @@ import { Navigate } from "react-router-dom";
 import { useAppContext } from "../hooks/useAppContext";
 
 export default function ProtectedRoute({ children }) {
-  const { user, userLoading } = useAppContext();
+  const { user, getUserIsLoading } = useAppContext();
 
-  if (userLoading) return <p>Loading....</p>;
+  console.log(user);
+
+  if (getUserIsLoading) return <p>Loading....</p>;
 
   if (!user) {
     return <Navigate to="/login" replace={true} />;

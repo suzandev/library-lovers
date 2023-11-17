@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -8,6 +9,7 @@ import session from "express-session";
 import helmet from "helmet";
 import hpp from "hpp";
 import { StatusCodes } from "http-status-codes";
+import jwt from "jsonwebtoken";
 import morgan from "morgan";
 import passport from "passport";
 import * as path from "path";
@@ -61,11 +63,41 @@ async function run() {
     await client.connect();
     const userCollection = client.db("library-lover").collection("user");
 
+    // Utils functions
+    const sendToken = (id, res) => {
+      const oneDay = 1000 * 60 * 60 * 24;
+
+      const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_LIFETIME,
+      });
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + oneDay),
+        secure: process.env.NODE_ENV === "production",
+      });
+    };
+
     // Middleware functions
     function isLoggedIn(req, res, next) {
+      const token = req.cookies.token;
+
+      if (token) {
+        try {
+          const payload = jwt.verify(token, process.env.JWT_SECRET);
+          req.user.userId = payload.userId;
+          return next();
+        } catch (error) {
+          return res.status(StatusCodes.UNAUTHORIZED).json({
+            message: "Invalid token",
+          });
+        }
+      }
+
       if (req.isAuthenticated()) {
         return next();
       }
+
       res.status(StatusCodes.UNAUTHORIZED).json({
         message: "Unauthorized",
       });
@@ -90,10 +122,52 @@ async function run() {
       });
     });
 
-    app.get("/api/v1/auth/user/me", isLoggedIn, (req, res) => {
-      res.set("Content-Type", "text/html");
+    // User auth routes
+    app.get("/api/v1/auth/user/me", isLoggedIn, async (req, res) => {
+      const loggedUser = await userCollection.findOne({
+        _id: req.user.userId,
+      });
+
+      const user = req.user.email ? req.user : loggedUser;
+
       res.status(StatusCodes.OK).json({
-        user: req.user,
+        user,
+      });
+    });
+
+    app.post("/api/v1/auth/register", async (req, res) => {
+      const { email, name, password } = req.body;
+      if (!email || !password || !name) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "All fields are required",
+        });
+      }
+
+      const user = await userCollection.findOne({
+        email: email,
+      });
+
+      if (user) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "User already exists",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await userCollection.insertOne({
+        name: name,
+        email: email,
+        password: hashedPassword,
+        role: "user",
+      });
+
+      sendToken(newUser.insertedId, res);
+
+      res.status(StatusCodes.CREATED).json({
+        user: {
+          name: newUser.name,
+          email: newUser.email,
+        },
       });
     });
 
@@ -103,6 +177,11 @@ async function run() {
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: "something went wrong!",
           });
+
+        res.cookie("token", "logout", {
+          httpOnly: true,
+          expires: new Date(Date.now()),
+        });
 
         res.status(StatusCodes.OK).json({
           message: "Unauthorized",

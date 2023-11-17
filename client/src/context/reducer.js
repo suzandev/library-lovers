@@ -1,46 +1,59 @@
 import {
-  ERROR,
-  LOADING,
+  GET_USER_ERROR,
+  GET_USER_LOADING,
   LOGOUT_USER,
+  REGISTER_USER_ERROR,
+  REGISTER_USER_LOADING,
   SET_USER,
-  USER_IS_LOADING,
 } from "./actions";
 
 export const initialState = {
   user: null,
-  userIsLoading: false,
-  isLoading: false,
-  isError: false,
   error: null,
+
+  registerIsLoading: false,
+  getUserIsLoading: false,
+
+  registerIsError: false,
+  getUserIsError: false,
 };
 
 function reducer(state, action) {
   switch (action.type) {
-    case LOADING:
+    case REGISTER_USER_LOADING:
       return {
         ...state,
-        isLoading: true,
+        registerIsLoading: true,
+      };
+    case GET_USER_LOADING:
+      return {
+        ...state,
+        getUserIsLoading: true,
       };
 
-    case USER_IS_LOADING:
+    case REGISTER_USER_ERROR:
       return {
         ...state,
-        userIsLoading: true,
+        registerIsError: true,
+        registerIsLoading: false,
+        error: action.payload,
       };
-
-    case ERROR:
+    case GET_USER_ERROR:
       return {
         ...state,
-        isError: true,
+        getUserIsError: true,
+        getUserIsLoading: false,
         error: action.payload,
       };
 
     case SET_USER:
       return {
         ...state,
-        isError: false,
-        isLoading: false,
-        userIsLoading: false,
+        registerIsLoading: false,
+        getUserIsLoading: false,
+        registerIsError: false,
+        getUserIsError: false,
+        error: null,
         user: action.payload,
       };
 

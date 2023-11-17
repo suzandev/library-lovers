@@ -1,5 +1,6 @@
 export const LOGOUT_USER = "LOGOUT_USER";
-export const LOADING = "LOADING";
-export const ERROR = "ERROR";
 export const SET_USER = "SET_USER";
-export const USER_IS_LOADING = "USER_IS_LOADING";
+export const REGISTER_USER_LOADING = "REGISTER_USER_LOADING";
+export const REGISTER_USER_ERROR = "REGISTER_USER_ERROR";
+export const GET_USER_LOADING = "GET_USER_LOADING";
+export const GET_USER_ERROR = "GET_USER_ERROR";

@@ -1,7 +1,16 @@
 import axios from "axios";
 import PropTypes from "prop-types";
 import { createContext, useEffect, useReducer } from "react";
-import { ERROR, LOGOUT_USER, SET_USER } from "./actions";
+import toast from "react-hot-toast";
+
+import {
+  GET_USER_ERROR,
+  GET_USER_LOADING,
+  LOGOUT_USER,
+  REGISTER_USER_ERROR,
+  REGISTER_USER_LOADING,
+  SET_USER,
+} from "./actions";
 import reducer, { initialState } from "./reducer";
 
 export const AppContext = createContext();
@@ -20,6 +29,7 @@ export default function Provider({ children }) {
     },
     (error) => {
       if (error.response.status === 401) {
+        toast.error("Unauthorize");
         logoutUser();
       }
       return Promise.reject(error);
@@ -27,14 +37,31 @@ export default function Provider({ children }) {
   );
 
   const getCurrentUser = async () => {
-    dispatch({ type: SET_USER });
+    dispatch({ type: GET_USER_LOADING });
     try {
       const { data } = await authFetch.get("/auth/user/me");
-
+      console.log(data);
       dispatch({ type: SET_USER, payload: data?.user });
     } catch (error) {
       console.error(error.response.data.message);
-      dispatch({ type: ERROR, payload: error.response.data.message });
+      dispatch({ type: GET_USER_ERROR, payload: error.response.data.message });
+    }
+  };
+
+  const registerUser = async (body, resetForm, navigate) => {
+    dispatch({ type: REGISTER_USER_LOADING });
+    try {
+      const { data } = await authFetch.post("/auth/register", body);
+      dispatch({ type: SET_USER, payload: data?.user });
+      resetForm();
+      navigate("/");
+      toast.success("Successfully Registered!");
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: REGISTER_USER_ERROR,
+        payload: error.response.data.message,
+      });
     }
   };
 
@@ -50,7 +77,7 @@ export default function Provider({ children }) {
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, logoutUser }}>
+    <AppContext.Provider value={{ ...state, logoutUser, registerUser }}>
       {children}
     </AppContext.Provider>
   );
