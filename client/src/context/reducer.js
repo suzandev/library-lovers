@@ -2,7 +2,6 @@ import {
   GET_BOOKS_ERROR,
   GET_BOOKS_LOADING,
   GET_USER_ERROR,
-  GET_USER_LOADING,
   LOGIN_USER_ERROR,
   LOGIN_USER_LOADING,
   LOGOUT_USER,
@@ -21,7 +20,7 @@ export const initialState = {
 
   registerIsLoading: false,
   loginIsLoading: false,
-  getUserIsLoading: false,
+  getUserIsLoading: true,
   getBooksIsLoading: false,
   postBookIsLoading: false,
 
@@ -39,11 +38,6 @@ function reducer(state, action) {
       return {
         ...state,
         loginIsLoading: true,
-      };
-    case GET_USER_LOADING:
-      return {
-        ...state,
-        getUserIsLoading: true,
       };
     case GET_BOOKS_LOADING:
       return {
@@ -103,6 +97,8 @@ function reducer(state, action) {
         ...state,
         getBooksIsLoading: false,
         getBooksIsError: false,
+        postBookIsLoading: false,
+        postBookIsError: false,
         error: null,
         books: action.payload,
       };

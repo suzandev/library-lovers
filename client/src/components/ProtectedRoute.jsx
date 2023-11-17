@@ -7,9 +7,8 @@ export default function ProtectedRoute({ children }) {
 
   if (getUserIsLoading) return <p>Loading....</p>;
 
-  if (getUserIsLoading && !user) {
-    console.log("redirecting to login");
-    return <Navigate to="/login" replace={true} />;
+  if (!user) {
+    return <Navigate to="/login" />;
   }
 
   return children;

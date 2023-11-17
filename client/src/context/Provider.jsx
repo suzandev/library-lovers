@@ -7,10 +7,11 @@ import {
   GET_BOOKS_ERROR,
   GET_BOOKS_LOADING,
   GET_USER_ERROR,
-  GET_USER_LOADING,
   LOGIN_USER_ERROR,
   LOGIN_USER_LOADING,
   LOGOUT_USER,
+  POST_BOOK_ERROR,
+  POST_BOOK_LOADING,
   REGISTER_USER_ERROR,
   REGISTER_USER_LOADING,
   SET_BOOKS,
@@ -42,10 +43,12 @@ export default function Provider({ children }) {
 
   // Authentication
   const getCurrentUser = async () => {
-    dispatch({ type: GET_USER_LOADING });
     try {
       const { data } = await authFetch.get("/auth/user/me");
-      dispatch({ type: SET_USER, payload: data?.user });
+      dispatch({
+        type: SET_USER,
+        payload: { ...data?.user, isAuthenticated: true },
+      });
     } catch (error) {
       console.error(error.response.data.message);
       dispatch({ type: GET_USER_ERROR, payload: error.response.data.message });
@@ -107,13 +110,20 @@ export default function Provider({ children }) {
     }
   };
 
-  const postBook = async (body) => {
+  const postBook = async (body, resetForm, navigation) => {
+    dispatch({ type: POST_BOOK_LOADING });
     try {
       const { data } = await authFetch.post("/books", body);
       getBooks();
-      console.log(data);
+      resetForm();
+      navigation("/all-books");
+      toast.success(data.message);
     } catch (error) {
       console.error(error);
+      dispatch({
+        type: POST_BOOK_ERROR,
+        payload: error.response.data.message || error.response.data,
+      });
     }
   };
 

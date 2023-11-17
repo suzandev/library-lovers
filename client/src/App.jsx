@@ -1,6 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useAppContext } from "./hooks/useAppContext";
 import AddBook from "./pages/AddBook";
 import AllBooks from "./pages/AllBooks";
 import BookDetails from "./pages/BookDetails";
@@ -11,7 +12,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 function App() {
-  return (
+  const { getUserIsLoading } = useAppContext();
+  return !getUserIsLoading ? (
     <BrowserRouter>
       <Routes>
         <Route
@@ -55,6 +57,8 @@ function App() {
         />
       </Routes>
     </BrowserRouter>
+  ) : (
+    <div>Loading...</div>
   );
 }
 

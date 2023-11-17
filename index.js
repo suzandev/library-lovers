@@ -9,11 +9,14 @@ import session from "express-session";
 import helmet from "helmet";
 import hpp from "hpp";
 import { StatusCodes } from "http-status-codes";
+import { url } from "inspector";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import morgan from "morgan";
+import multer from "multer";
 import passport from "passport";
 import * as path from "path";
+import cloudinaryUpload from "./cloudinary.js";
 import client from "./database.js";
 import "./passport.js";
 
@@ -34,6 +37,9 @@ const limit = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: "Too many request from this IP. please try again in an hour!",
 });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // middleware
 app.use(express.json());
@@ -62,8 +68,8 @@ async function run() {
   try {
     // Connect the client to the server)
     await client.connect();
-    const userCollection = client.db("library-lover").collection("user");
-    const bookCollection = client.db("library-lover").collection("book");
+    const userCollection = client.db("library-lover").collection("users");
+    const bookCollection = client.db("library-lover").collection("books");
 
     // Utils functions
     const sendToken = (id, res) => {
@@ -134,8 +140,8 @@ async function run() {
       });
 
       if (!loggedUser) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: "The use belongs to this token does not exist!",
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+          message: "The user belongs to this token does not exist!",
         });
       }
 
@@ -240,29 +246,58 @@ async function run() {
     });
 
     // Books routes
-    app.post("/api/v1/books", isLoggedIn, async (req, res) => {
-      const { title, author, description, image, category, rating } = req.body;
-      const newBook = await bookCollection.insertOne({
-        title,
-        author,
-        description,
-        image,
-        category,
-        rating,
-      });
-      res.status(StatusCodes.CREATED).json({
-        book: {
-          id: newBook.insertedId,
-          title,
+    app.post(
+      "/api/v1/books",
+      isLoggedIn,
+      upload.single("image"),
+      async (req, res) => {
+        const { name, author, description, quantity, category, rating } =
+          req.body;
+
+        console.log(req.body);
+
+        if (
+          !name ||
+          !author ||
+          !description ||
+          !category ||
+          !rating ||
+          !quantity
+        ) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "All fields are required",
+          });
+        }
+
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+
+        const imageUrl = await cloudinaryUpload(dataURI);
+
+        if (imageUrl.error) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Something went wrong!",
+          });
+        }
+
+        await bookCollection.insertOne({
+          name,
           author,
           description,
-          image,
+          image: {
+            public_id: imageUrl.public_id,
+            url: imageUrl.secure_url,
+          },
           category,
+          quantity,
           rating,
-        },
-      });
-    });
+        });
 
+        res.status(StatusCodes.CREATED).json({
+          message: "Book added successfully",
+        });
+      }
+    );
     app.get("/api/v1/books", isLoggedIn, async (req, res) => {
       const books = await bookCollection.find({}).toArray();
       res.status(StatusCodes.OK).json(books);
