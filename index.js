@@ -67,8 +67,10 @@ async function run() {
     const sendToken = (id, res) => {
       const oneDay = 1000 * 60 * 60 * 24;
 
+      console.log(process.env.JWT_LIFETIME, process.env.JWT_SECRET);
+
       const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_LIFETIME,
+        expiresIn: "10h",
       });
 
       res.cookie("token", token, {
@@ -78,8 +80,13 @@ async function run() {
       });
     };
 
+    const passwordCompare = async (password, hashedPassword) => {
+      return await bcrypt.compare(password, hashedPassword);
+    };
+
     // Middleware functions
     function isLoggedIn(req, res, next) {
+      console.log(req.cookies);
       const token = req.cookies.token;
 
       if (token) {
@@ -171,6 +178,41 @@ async function run() {
       });
     });
 
+    app.post("/api/v1/auth/login", async (req, res) => {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "All fields are required",
+        });
+      }
+
+      const user = await userCollection.findOne({
+        email: email,
+      });
+
+      if (!user) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "User Does not exists",
+        });
+      }
+
+      if (!(await passwordCompare(passport, user.password))) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Invalid credentials",
+        });
+      }
+
+      sendToken(user._id, res);
+      res.status(StatusCodes.OK).json({
+        user: {
+          name: user.name,
+          email: user.email,
+          picture: user.picture,
+          role: user.role,
+        },
+      });
+    });
+
     app.post("/api/v1/auth/logout", (req, res) => {
       req.logout((err) => {
         if (err)
@@ -178,10 +220,10 @@ async function run() {
             message: "something went wrong!",
           });
 
-        res.cookie("token", "logout", {
-          httpOnly: true,
-          expires: new Date(Date.now()),
-        });
+        // res.cookie("token", "logout", {
+        //   httpOnly: true,
+        //   expires: new Date(Date.now()),
+        // });
 
         res.status(StatusCodes.OK).json({
           message: "Unauthorized",
