@@ -15,7 +15,7 @@ export default function Login() {
         to="/register"
       >
         <LoginForm />
-        <GoogleButton />
+        <GoogleButton title="Login" />
       </FormBody>
     </section>
   );
