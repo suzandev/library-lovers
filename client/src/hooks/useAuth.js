@@ -8,7 +8,7 @@ export default function useAuth() {
   });
 
   return {
-    isAuthenticated: user?.isAuthenticated,
+    isAuthenticated: user?.user?.isAuthenticated,
     isLoading,
   };
 }

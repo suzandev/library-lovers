@@ -7,9 +7,7 @@ const axiosInstance = axios.create({
 
 // response/request
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response.status === 401) {
       console.log("logging out");
