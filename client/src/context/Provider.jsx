@@ -1,12 +1,11 @@
 import axios from "axios";
 import PropTypes from "prop-types";
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useReducer } from "react";
 import toast from "react-hot-toast";
 
 import {
   GET_BOOKS_ERROR,
   GET_BOOKS_LOADING,
-  GET_USER_ERROR,
   LOGIN_USER_ERROR,
   LOGIN_USER_LOADING,
   LOGOUT_USER,
@@ -42,18 +41,6 @@ export default function Provider({ children }) {
   );
 
   // Authentication
-  const getCurrentUser = async () => {
-    try {
-      const { data } = await authFetch.get("/auth/user/me");
-      dispatch({
-        type: SET_USER,
-        payload: { ...data?.user, isAuthenticated: true },
-      });
-    } catch (error) {
-      console.error(error.response.data.message);
-      dispatch({ type: GET_USER_ERROR, payload: error.response.data.message });
-    }
-  };
 
   const registerUser = async (body, resetForm, navigate) => {
     dispatch({ type: REGISTER_USER_LOADING });
@@ -135,11 +122,6 @@ export default function Provider({ children }) {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    getCurrentUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <AppContext.Provider

@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import ReactStars from "react-rating-stars-component";
 import { Link } from "react-router-dom";
-import { useAppContext } from "../hooks/useAppContext";
+import useAuth from "../hooks/useAuth";
 import AppButton from "./AppButton";
 
 export default function BookCard({ book, type }) {
-  const { user } = useAppContext();
+  const { user } = useAuth();
   return type === "book" ? (
     <div className="bg-brand-white shadow-md">
       <div className="h-60 w-full overflow-hidden">

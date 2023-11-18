@@ -1,31 +1,26 @@
 import ReactStars from "react-rating-stars-component";
 import AppButton from "../components/AppButton";
+import useGetBook from "../hooks/useGetBook";
 import BookBorrowForm from "./BookBorrowForm";
 export default function Details() {
-  const book = {
-    id: "01HES1WNVH5QEMQJRQ4N2W85KV",
-    image: "http://dummyimage.com/1600x2560.png/cc0000/ffffff",
-    name: "Unfaithful",
-    quantity: 95,
-    author: "Florri Ramlot",
-    category: "Drama|Thriller",
-    short_description:
-      "Bypass Right Cephalic Vein to Upper Vein with Autologous Arterial Tissue, Open Approach",
-    rating: 2.1,
-  };
+  const { book, isLoading, isError, error } = useGetBook();
 
-  return (
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : isError ? (
+    <div>{error.message}</div>
+  ) : (
     <>
-      <div className="my-6 flex flex-wrap items-start justify-evenly">
-        <div className="h-96 shadow-md">
+      <div className="my-6 flex flex-col items-center gap-10">
+        <div className="h-96 max-w-sm shadow-md">
           <img
-            src={book.image}
+            src={book.image.url}
             alt={book.name}
             className="h-full w-full object-contain"
           />
         </div>
         <div className="space-y-6">
-          <h2 className="text-brand-text text-3xl max-md:text-lg">
+          <h2 className="text-3xl text-brand-text max-md:text-lg">
             {book.name}
           </h2>
           <h4 className="text-gray-500">{book.author}</h4>
@@ -33,13 +28,13 @@ export default function Details() {
             <ReactStars
               count={5}
               half={true}
-              value={book.rating}
+              value={parseInt(book.rating)}
               edit={false}
               size={24}
               activeColor="#32cb81"
             />
           </div>
-          <p className="text-brand-text text-sm">{book.short_description}</p>
+          <p className="text-sm text-brand-text">{book.description}</p>
           <div className="flex gap-2 max-md:flex-wrap">
             <AppButton
               type="button"

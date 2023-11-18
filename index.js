@@ -152,6 +152,7 @@ async function run() {
           email: user.email,
           role: user.role,
           picture: user.picture,
+          isAuthenticated: true,
         },
       });
     });
@@ -185,9 +186,13 @@ async function run() {
       sendToken(newUser.insertedId, res);
 
       res.status(StatusCodes.CREATED).json({
+        message: "User created successfully",
         user: {
           name: newUser.name,
           email: newUser.email,
+          role: newUser.role,
+          picture: newUser.picture,
+          isAuthenticated: true,
         },
       });
     });
@@ -223,6 +228,7 @@ async function run() {
           email: user.email,
           picture: user.picture,
           role: user.role,
+          isAuthenticated: true,
         },
       });
     });
@@ -240,7 +246,7 @@ async function run() {
         });
 
         res.status(StatusCodes.OK).json({
-          message: "Unauthorized",
+          message: "Logged out successfully!",
         });
       });
     });
@@ -295,25 +301,45 @@ async function run() {
 
         res.status(StatusCodes.CREATED).json({
           message: "Book added successfully",
+          book: {
+            name,
+            author,
+            description,
+            image: {
+              public_id: imageUrl.public_id,
+              url: imageUrl.secure_url,
+            },
+            category,
+            quantity,
+            rating,
+          },
         });
       }
     );
     app.get("/api/v1/books", isLoggedIn, async (req, res) => {
-      const books = await bookCollection.find({}).toArray();
-      res.status(StatusCodes.OK).json(books);
+      try {
+        const books = await bookCollection.find({}).toArray();
+        res.status(StatusCodes.OK).json(books);
+      } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
     });
 
     app.get("/api/v1/books/:id", isLoggedIn, async (req, res) => {
-      const { id } = req.params;
-      const book = await bookCollection.findOne({ _id: new ObjectId(id) });
-      if (!book) {
+      try {
+        const { id } = req.params;
+        const book = await bookCollection.findOne({ _id: new ObjectId(id) });
+
+        res.status(StatusCodes.OK).json({
+          book,
+        });
+      } catch (error) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Book not found",
+          message: "No book found with this id",
         });
       }
-      res.status(StatusCodes.OK).json({
-        book,
-      });
     });
 
     app.patch("/api/v1/books/:id", isLoggedIn, async (req, res) => {
@@ -355,10 +381,18 @@ async function run() {
         message: "Book deleted successfully",
       });
     });
+
+    // Not found route
+    app.use("*", (req, res) => {
+      res.status(StatusCodes.NOT_FOUND).json({
+        message: "Route not found",
+      });
+    });
   } catch (error) {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
     await client.close();
+    process.exit(1);
   }
 }
 
