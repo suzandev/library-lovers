@@ -360,21 +360,49 @@ async function run() {
       }
     );
 
-    app.get("/api/v1/books", async (req, res) => {
+    app.get("/api/v1/books", isLoggedIn, async (req, res) => {
       let queries = { ...req.query };
-      const excludeFields = ["page", "limit"];
+
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const excludeFields = ["page", "limit", "abo"];
       excludeFields.forEach((item) => delete queries[item]);
       // if query value is null then remove from queries
       Object.keys(queries).forEach((item) => {
-        if (!queries[item]) delete queries[item];
+        if (queries[item] === "undefined") delete queries[item];
       });
 
       try {
         let result = bookCollection.find({ ...queries });
+
+        // Find books where quantity gether than 0
+        if (req.query.abo !== "null" && req.query.abo) {
+          result = result.filter({ quantity: { $gt: "0" } });
+        }
+
+        // pagination
+        result = result.skip(skip).limit(limit);
+
+        // Execute query
         const books = await result.toArray();
 
-        res.status(StatusCodes.OK).json(books);
+        // get total books
+        let total;
+        if (req.query.abo !== "null" && req.query.abo) {
+          const quantityQuery = { ...queries, quantity: { $gt: "0" } };
+          total = await bookCollection.countDocuments(quantityQuery);
+        } else {
+          total = await bookCollection.countDocuments({ ...queries });
+        }
+
+        // get total pages
+        const pages = Math.ceil(total / limit);
+
+        res.status(StatusCodes.OK).json({ books, total, pages });
       } catch (error) {
+        console.log(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           message: "Something went wrong!",
         });

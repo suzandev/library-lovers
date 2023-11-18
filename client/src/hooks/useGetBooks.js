@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getBooks } from "../services/bookApi";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+
 export default function useGetBooks() {
   const { category } = useParams();
+  const [searchParams] = useSearchParams();
+  const abo = searchParams.get("abo");
+  const page = searchParams.get("page");
 
   const {
     data: books,
@@ -10,12 +14,14 @@ export default function useGetBooks() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["books", category],
-    queryFn: () => getBooks({ category }),
+    queryKey: ["books", category, abo, page],
+    queryFn: () => getBooks({ category, abo }),
   });
 
   return {
-    books,
+    books: books?.books || [],
+    total: books?.total,
+    pages: books?.pages,
     isLoading,
     isError,
     error,

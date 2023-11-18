@@ -1,15 +1,10 @@
 import axiosInstance from "./axiosInstance";
 
-export async function getBooks({ category }) {
-  let url;
-  if (!category) {
-    url = "books";
-  } else {
-    url = `books/?category=${category}`;
-  }
-
+export async function getBooks({ category, abo }) {
   try {
-    const { data } = await axiosInstance.get(url);
+    const { data } = await axiosInstance.get(
+      `books/?category=${category}&abo=${abo}`,
+    );
     return data;
   } catch (error) {
     throw new Error(error.response.data.message || error.response.data);
