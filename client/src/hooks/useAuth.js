@@ -10,5 +10,6 @@ export default function useAuth() {
   return {
     isAuthenticated: user?.user?.isAuthenticated,
     isLoading,
+    librarian: user?.user?.role === "librarian",
   };
 }

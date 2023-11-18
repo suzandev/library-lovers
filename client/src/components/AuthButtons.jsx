@@ -4,7 +4,7 @@ import useLogout from "../hooks/useLogout";
 import AppButton from "./AppButton";
 
 export default function AuthButtons({ smallDev }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, librarian } = useAuth();
   const { logout, isLoading } = useLogout();
 
   return (
@@ -15,7 +15,7 @@ export default function AuthButtons({ smallDev }) {
     >
       {isAuthenticated ? (
         <>
-          <AppButton title="Add" to="/add-book" />
+          {librarian && <AppButton title="Add" to="/add-book" />}
           <AppButton
             title="Logout"
             to="/"

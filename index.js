@@ -91,6 +91,9 @@ async function run() {
     // Middleware functions
     async function isLoggedIn(req, res, next) {
       const token = req.cookies.token;
+      if (req.user) {
+        return next();
+      }
 
       if (token) {
         try {
@@ -114,6 +117,34 @@ async function run() {
       });
     }
 
+    function permission(...roles) {
+      return async (req, res, next) => {
+        try {
+          const loggedUser = await userCollection.findOne({
+            _id: new ObjectId(req.user.userId || req.user?._id),
+          });
+
+          if (!loggedUser) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+              message: "Unauthorized",
+            });
+          }
+
+          if (!roles.includes(loggedUser.role)) {
+            return res.status(StatusCodes.FORBIDDEN).json({
+              message: "You do not have permission to perform this action",
+            });
+          }
+        } catch (error) {
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Something went wrong",
+          });
+        }
+
+        return next();
+      };
+    }
+
     // Passport login route
     app.get(
       "/auth/google",
@@ -135,26 +166,47 @@ async function run() {
 
     // User auth routes
     app.get("/api/v1/auth/user/me", isLoggedIn, async (req, res) => {
-      const loggedUser = await userCollection.findOne({
-        _id: new ObjectId(req.user.userId),
-      });
+      try {
+        // User from session
+        if (req.user) {
+          return res.status(StatusCodes.OK).json({
+            user: {
+              name: req.user.name,
+              email: req.user.email,
+              role: req.user.role,
+              picture: req.user.picture,
+              isAuthenticated: true,
+            },
+          });
+        }
 
-      if (!loggedUser) {
-        return res.status(StatusCodes.UNAUTHORIZED).json({
-          message: "The user belongs to this token does not exist!",
+        // User from database
+        const loggedUser = await userCollection.findOne({
+          _id: new ObjectId(req.user.userId),
+        });
+
+        if (!loggedUser) {
+          return res.status(StatusCodes.UNAUTHORIZED).json({
+            message: "The user belongs to this token does not exist!",
+          });
+        }
+
+        const user = req.user.email ? req.user : loggedUser;
+        res.status(StatusCodes.OK).json({
+          user: {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            picture: user.picture,
+            isAuthenticated: true,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong",
         });
       }
-
-      const user = req.user.email ? req.user : loggedUser;
-      res.status(StatusCodes.OK).json({
-        user: {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          picture: user.picture,
-          isAuthenticated: true,
-        },
-      });
     });
 
     app.post("/api/v1/auth/register", async (req, res) => {
@@ -255,6 +307,7 @@ async function run() {
     app.post(
       "/api/v1/books",
       isLoggedIn,
+      permission("librarian"),
       upload.single("image"),
       async (req, res) => {
         const { name, author, description, quantity, category, rating } =
@@ -342,45 +395,55 @@ async function run() {
       }
     });
 
-    app.patch("/api/v1/books/:id", isLoggedIn, async (req, res) => {
-      const { id } = req.params;
-      const { title, author, description, image, category } = req.body;
-      const book = await bookCollection.updateOne(
-        { _id: new ObjectId(id) },
-        {
-          $set: {
-            title,
-            author,
-            description,
-            image,
-            category,
-          },
+    app.patch(
+      "/api/v1/books/:id",
+      isLoggedIn,
+      permission("librarian"),
+      async (req, res) => {
+        const { id } = req.params;
+        const { title, author, description, image, category } = req.body;
+        const book = await bookCollection.updateOne(
+          { _id: new ObjectId(id) },
+          {
+            $set: {
+              title,
+              author,
+              description,
+              image,
+              category,
+            },
+          }
+        );
+
+        if (!book) {
+          return res.status(StatusCodes.NOT_FOUND).json({
+            message: "Book not found",
+          });
         }
-      );
 
-      if (!book) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Book not found",
+        res.status(StatusCodes.OK).json({
+          message: "Book updated successfully",
         });
       }
+    );
 
-      res.status(StatusCodes.OK).json({
-        message: "Book updated successfully",
-      });
-    });
-
-    app.delete("/api/v1/books/:id", isLoggedIn, async (req, res) => {
-      const { id } = req.params;
-      const book = await bookCollection.deleteOne({ _id: new ObjectId(id) });
-      if (!book) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Book not found",
+    app.delete(
+      "/api/v1/books/:id",
+      isLoggedIn,
+      permission("librarian"),
+      async (req, res) => {
+        const { id } = req.params;
+        const book = await bookCollection.deleteOne({ _id: new ObjectId(id) });
+        if (!book) {
+          return res.status(StatusCodes.NOT_FOUND).json({
+            message: "Book not found",
+          });
+        }
+        res.status(StatusCodes.OK).json({
+          message: "Book deleted successfully",
         });
       }
-      res.status(StatusCodes.OK).json({
-        message: "Book deleted successfully",
-      });
-    });
+    );
 
     // Not found route
     app.use("*", (req, res) => {

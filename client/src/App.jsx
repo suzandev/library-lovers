@@ -9,14 +9,20 @@ import BorrowedBooks from "./pages/BorrowedBooks";
 import Environment from "./pages/Environment";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 1000  60  60,
       staleTime: 0,
+      retry: (_failureCount, error) => {
+        console.log("error", error.message === "401");
+        if (error.message === "401") {
+          return false;
+        }
+        return true;
+      },
     },
   },
 });

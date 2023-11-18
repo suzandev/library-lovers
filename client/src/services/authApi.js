@@ -30,7 +30,7 @@ export async function getCurrentUser() {
     const { data } = await axiosInstance.get("auth/user/me");
     return data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response.status);
   }
 }
 
