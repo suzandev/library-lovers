@@ -16,7 +16,7 @@ export default function useGetBook() {
   });
 
   return {
-    book: book.book || null,
+    book: book?.book,
     isLoading,
     isError,
     error,

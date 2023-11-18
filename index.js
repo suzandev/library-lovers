@@ -328,16 +328,18 @@ async function run() {
     });
 
     app.get("/api/v1/books/:id", isLoggedIn, async (req, res) => {
-      const { id } = req.params;
-      const book = await bookCollection.findOne({ _id: new ObjectId(id) });
-      if (!book) {
+      try {
+        const { id } = req.params;
+        const book = await bookCollection.findOne({ _id: new ObjectId(id) });
+
+        res.status(StatusCodes.OK).json({
+          book,
+        });
+      } catch (error) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Book not found",
+          message: "No book found with this id",
         });
       }
-      res.status(StatusCodes.OK).json({
-        book,
-      });
     });
 
     app.patch("/api/v1/books/:id", isLoggedIn, async (req, res) => {
@@ -390,6 +392,7 @@ async function run() {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
     await client.close();
+    process.exit(1);
   }
 }
 

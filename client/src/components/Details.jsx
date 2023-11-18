@@ -3,9 +3,13 @@ import AppButton from "../components/AppButton";
 import useGetBook from "../hooks/useGetBook";
 import BookBorrowForm from "./BookBorrowForm";
 export default function Details() {
-  const { book } = useGetBook();
+  const { book, isLoading, isError, error } = useGetBook();
 
-  return (
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : isError ? (
+    <div>{error.message}</div>
+  ) : (
     <>
       <div className="my-6 flex flex-col items-center gap-10">
         <div className="h-96 max-w-sm shadow-md">
@@ -24,7 +28,7 @@ export default function Details() {
             <ReactStars
               count={5}
               half={true}
-              value={book.rating}
+              value={parseInt(book.rating)}
               edit={false}
               size={24}
               activeColor="#32cb81"
