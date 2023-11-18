@@ -1,8 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { categoryOptions } from "../constant";
-import { useAppContext } from "../hooks/useAppContext";
-import ErrorMsg from "./ErrorMsg";
+import useAddBook from "../hooks/useAddBook";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
@@ -16,9 +14,8 @@ export default function AddBookForm() {
     handleSubmit,
     reset,
   } = useForm();
-  const { postBook, postBookIsLoading, postBookIsError, error } =
-    useAppContext();
-  const navigate = useNavigate();
+
+  const { addBook, isLoading } = useAddBook();
 
   function handleAddBook(values) {
     const formData = new FormData();
@@ -29,8 +26,11 @@ export default function AddBookForm() {
     formData.append("category", values.category);
     formData.append("rating", parseInt(values.rating));
     formData.append("quantity", parseInt(values.quantity));
-
-    postBook(formData, reset, navigate);
+    addBook(formData, {
+      onSuccess() {
+        reset();
+      },
+    });
   }
 
   return (
@@ -134,14 +134,8 @@ export default function AddBookForm() {
         />
       </FormRow>
 
-      {postBookIsError && (
-        <div className="mb-4">
-          <ErrorMsg label="Error">{error}</ErrorMsg>
-        </div>
-      )}
-
-      <FormButton type="submit" loading={postBookIsLoading}>
-        Add book {postBookIsLoading && <LoadingSpinner />}
+      <FormButton type="submit" loading={isLoading}>
+        Add book {isLoading && <LoadingSpinner />}
       </FormButton>
     </form>
   );

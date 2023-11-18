@@ -301,6 +301,18 @@ async function run() {
 
         res.status(StatusCodes.CREATED).json({
           message: "Book added successfully",
+          book: {
+            name,
+            author,
+            description,
+            image: {
+              public_id: imageUrl.public_id,
+              url: imageUrl.secure_url,
+            },
+            category,
+            quantity,
+            rating,
+          },
         });
       }
     );
