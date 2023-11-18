@@ -186,9 +186,13 @@ async function run() {
       sendToken(newUser.insertedId, res);
 
       res.status(StatusCodes.CREATED).json({
+        message: "User created successfully",
         user: {
           name: newUser.name,
           email: newUser.email,
+          role: newUser.role,
+          picture: newUser.picture,
+          isAuthenticated: true,
         },
       });
     });
@@ -224,6 +228,7 @@ async function run() {
           email: user.email,
           picture: user.picture,
           role: user.role,
+          isAuthenticated: true,
         },
       });
     });

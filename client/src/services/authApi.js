@@ -21,7 +21,7 @@ export async function register(name, email, password) {
     });
     return data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.response.data.message || error.response.data);
   }
 }
 

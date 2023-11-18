@@ -1,7 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../hooks/useAppContext";
-import ErrorMsg from "./ErrorMsg";
+import useRegister from "../hooks/useRegister";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
@@ -14,17 +12,23 @@ export default function RegisterForm() {
     handleSubmit,
     reset,
   } = useForm();
-  const { registerUser, error, registerIsLoading, registerIsError } =
-    useAppContext();
-  const navigate = useNavigate();
 
-  function handleRegister(values) {
-    const { name, email, password } = values;
-    registerUser({ name, email, password }, reset, navigate);
-  }
+  const { register: registerUser, isLoading } = useRegister();
 
   return (
-    <form className="w-full" onSubmit={handleSubmit(handleRegister)}>
+    <form
+      className="w-full"
+      onSubmit={handleSubmit(({ name, email, password }) => {
+        registerUser(
+          { name, email, password },
+          {
+            onSettled() {
+              reset();
+            },
+          },
+        );
+      })}
+    >
       <FormRow label="Name" id="name" errors={errors}>
         <Input
           type="text"
@@ -64,14 +68,8 @@ export default function RegisterForm() {
         />
       </FormRow>
 
-      {registerIsError && (
-        <div className="mb-4">
-          <ErrorMsg label="Error">{error}</ErrorMsg>{" "}
-        </div>
-      )}
-
-      <FormButton type="submit" loading={registerIsLoading}>
-        Register {registerIsLoading && <LoadingSpinner />}
+      <FormButton type="submit" loading={isLoading}>
+        Register {isLoading && <LoadingSpinner />}
       </FormButton>
     </form>
   );
