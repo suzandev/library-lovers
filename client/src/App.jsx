@@ -10,11 +10,12 @@ import Environment from "./pages/Environment";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 1000 * 60 * 60,
+      // staleTime: 1000  60  60,
       staleTime: 0,
     },
   },
@@ -63,7 +64,7 @@ function App() {
             path="*"
             element={
               <AppLayout>
-                <h1>Ops this page not found</h1>
+                <NotFound />
               </AppLayout>
             }
           />
