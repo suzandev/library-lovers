@@ -45,7 +45,6 @@ function App() {
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
 
-        <Route path="/notFound" element={<NotFound />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -53,7 +52,7 @@ function App() {
           path="*"
           element={
             <AppLayout>
-              <h1>Ops this page not found</h1>
+              <NotFound />
             </AppLayout>
           }
         />
