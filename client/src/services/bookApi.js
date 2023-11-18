@@ -31,7 +31,7 @@ export async function getBook(id) {
 
 export async function borrowBook(body) {
   try {
-    const { data } = await axiosInstance.post("books/borrowed", body);
+    const { data } = await axiosInstance.post("books/user/borrowed", body);
 
     return data;
   } catch (error) {

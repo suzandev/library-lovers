@@ -475,7 +475,7 @@ async function run() {
     );
 
     // Borrowed Book routes
-    app.post("/api/v1/books/borrowed", isLoggedIn, async (req, res) => {
+    app.post("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
       const { bookId, returnDate, name, email } = req.body;
       const currentDate = new Date().toISOString().split("T")[0];
 
@@ -540,6 +540,41 @@ async function run() {
 
         res.status(StatusCodes.OK).json({
           message: "Book borrowed successfully",
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    });
+
+    app.get("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
+      const user = req.user?.userId || req.user?._id;
+      try {
+        const books = await borrowedBooksCollection
+          .aggregate([
+            {
+              $match: {
+                userId: new ObjectId(user),
+              },
+            },
+            {
+              $lookup: {
+                from: "books",
+                localField: "bookId",
+                foreignField: "_id",
+                as: "book",
+              },
+            },
+            {
+              $unwind: "$book",
+            },
+          ])
+          .toArray();
+
+        res.status(StatusCodes.OK).json({
+          books,
         });
       } catch (error) {
         console.log(error);
