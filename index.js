@@ -152,6 +152,7 @@ async function run() {
           email: user.email,
           role: user.role,
           picture: user.picture,
+          isAuthenticated: true,
         },
       });
     });
