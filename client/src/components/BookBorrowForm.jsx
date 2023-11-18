@@ -2,18 +2,26 @@ import { useForm } from "react-hook-form";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
+import useBorrowBook from "../hooks/useBorrowBook";
+import LoadingSpinner from "./LoadingSpinner";
+import useAuth from "../hooks/useAuth";
 
 export default function BookBorrowForm() {
   const {
     register,
     formState: { errors },
-    getValues,
     handleSubmit,
     reset,
   } = useForm();
+  const { borrowBook, isLoading } = useBorrowBook();
+  const { user } = useAuth();
 
   const handleBorrow = handleSubmit((values) => {
-    console.log(values);
+    borrowBook(values, {
+      onSettled: () => {
+        reset();
+      },
+    });
 
     document.getElementById("my_modal_1").close();
   });
@@ -32,6 +40,7 @@ export default function BookBorrowForm() {
         <Input
           type="email"
           id="email"
+          defaultValue={user?.email}
           form={register("email", {
             required: "This field is required",
             pattern: {
@@ -42,11 +51,12 @@ export default function BookBorrowForm() {
         />
       </FormRow>
 
-      <FormRow label="Username" id="username" errors={errors}>
+      <FormRow label="Name" id="name" errors={errors}>
         <Input
           type="text"
-          id="username"
-          form={register("username", {
+          id="name"
+          defaultValue={user?.name}
+          form={register("name", {
             required: "Please tell us your user name",
             min: 2,
             max: 50,
@@ -54,11 +64,11 @@ export default function BookBorrowForm() {
         />
       </FormRow>
 
-      <FormRow label="Return Date" id="return_date" errors={errors}>
+      <FormRow label="Return Date" id="returnDate" errors={errors}>
         <Input
           type="date"
-          id="return_date"
-          form={register("return_date", {
+          id="returnDate"
+          form={register("returnDate", {
             required: "Please tell us your user name",
             validate: (value) =>
               value >= new Date().toISOString().split("T")[0] ||
@@ -67,7 +77,10 @@ export default function BookBorrowForm() {
         />
       </FormRow>
 
-      <FormButton type="submit">Borrow</FormButton>
+      <FormButton type="submit" loading={isLoading}>
+        Borrow
+        {isLoading && <LoadingSpinner />}
+      </FormButton>
     </form>
   );
 }

@@ -8,8 +8,9 @@ export default function useAuth() {
   });
 
   return {
-    isAuthenticated: user?.user?.isAuthenticated || user?.isAuthenticated,
+    isAuthenticated: user?.isAuthenticated,
     isLoading,
     librarian: user?.role === "librarian",
+    user,
   };
 }

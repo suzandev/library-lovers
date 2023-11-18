@@ -70,6 +70,9 @@ async function run() {
     await client.connect();
     const userCollection = client.db("library-lover").collection("users");
     const bookCollection = client.db("library-lover").collection("books");
+    const borrowedBooksCollection = client
+      .db("library-lover")
+      .collection("borrowedBooks");
 
     // Utils functions
     const sendToken = (id, res) => {
@@ -329,7 +332,7 @@ async function run() {
           });
         }
 
-        await bookCollection.insertOne({
+        const newBook = await bookCollection.insertOne({
           name,
           author,
           description,
@@ -338,23 +341,20 @@ async function run() {
             url: imageUrl.secure_url,
           },
           category,
-          quantity,
-          rating,
+          quantity: parseInt(quantity),
+          rating: parseInt(rating),
         });
 
         res.status(StatusCodes.CREATED).json({
           message: "Book added successfully",
           book: {
-            name,
-            author,
-            description,
-            image: {
-              public_id: imageUrl.public_id,
-              url: imageUrl.secure_url,
-            },
-            category,
-            quantity,
-            rating,
+            name: newBook.name,
+            author: newBook.author,
+            description: newBook.description,
+            image: newBook.image,
+            category: newBook.category,
+            quantity: newBook.quantity,
+            rating: newBook.rating,
           },
         });
       }
@@ -379,7 +379,7 @@ async function run() {
 
         // Find books where quantity gether than 0
         if (req.query.abo !== "null" && req.query.abo) {
-          result = result.filter({ quantity: { $gt: "0" } });
+          result = result.filter({ quantity: { $gt: 0 } });
         }
 
         // pagination
@@ -391,7 +391,7 @@ async function run() {
         // get total books
         let total;
         if (req.query.abo !== "null" && req.query.abo) {
-          const quantityQuery = { ...queries, quantity: { $gt: "0" } };
+          const quantityQuery = { ...queries, quantity: { $gt: 0 } };
           total = await bookCollection.countDocuments(quantityQuery);
         } else {
           total = await bookCollection.countDocuments({ ...queries });
@@ -473,6 +473,81 @@ async function run() {
         });
       }
     );
+
+    // Borrowed Book routes
+    app.post("/api/v1/books/borrowed", isLoggedIn, async (req, res) => {
+      const { bookId, returnDate, name, email } = req.body;
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      const user = req.user?.userId || req.user?._id;
+
+      try {
+        if (!bookId || !returnDate || !name || !email) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "All fields are required",
+          });
+        }
+
+        if (!(returnDate >= currentDate)) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Return date must be greater than today's date",
+          });
+        }
+
+        // check if book is already borrowed
+        const borrowedBook = await borrowedBooksCollection.findOne({
+          bookId: new ObjectId(bookId),
+          userId: new ObjectId(req.user.userId),
+        });
+
+        if (borrowedBook) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Book already borrowed",
+          });
+        }
+
+        // check if book is available
+        const book = await bookCollection.findOne({
+          _id: new ObjectId(bookId),
+          quantity: { $gt: 0 },
+        });
+
+        if (!book) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Book not available",
+          });
+        }
+
+        // insert borrowed book
+        await borrowedBooksCollection.insertOne({
+          bookId: new ObjectId(bookId),
+          userId: new ObjectId(user),
+          name,
+          email,
+          borrowedDate: currentDate,
+          returnDate,
+        });
+
+        // update book quantity
+        await bookCollection.updateOne(
+          { _id: new ObjectId(bookId) },
+          {
+            $inc: {
+              quantity: -1,
+            },
+          }
+        );
+
+        res.status(StatusCodes.OK).json({
+          message: "Book borrowed successfully",
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    });
 
     // Not found route
     app.use("*", (req, res) => {

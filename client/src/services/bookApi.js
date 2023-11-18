@@ -28,3 +28,13 @@ export async function getBook(id) {
     throw new Error(error.response.data.message || error.response.data);
   }
 }
+
+export async function borrowBook(body) {
+  try {
+    const { data } = await axiosInstance.post("books/borrowed", body);
+
+    return data;
+  } catch (error) {
+    throw new Error(error.response.data.message || error.response.data);
+  }
+}
