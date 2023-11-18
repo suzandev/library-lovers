@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
-import useGetBooks from "../hooks/useGetBooks";
+import PropTypes from "prop-types";
 
-export default function Pagination() {
-  const { pages } = useGetBooks();
+export default function Pagination({ pages }) {
   const [searchParam, setSearchParam] = useSearchParams();
   const currentPage = Number(searchParam.get("page"));
 
@@ -78,3 +77,7 @@ export default function Pagination() {
     </div>
   );
 }
+
+Pagination.propTypes = {
+  pages: PropTypes.number.isRequired,
+};

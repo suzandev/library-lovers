@@ -543,9 +543,12 @@ async function run() {
 
     app.get("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
       const userId = req.user?.userId || req.user?._id;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
 
       try {
-        const books = await borrowedBooksCollection
+        let result = await borrowedBooksCollection
           .aggregate([
             {
               $match: {
@@ -564,10 +567,21 @@ async function run() {
               $unwind: "$book",
             },
           ])
-          .toArray();
+          .skip(skip)
+          .limit(limit)
+          .toArray(); // Move toArray here
+
+        const total = await borrowedBooksCollection.countDocuments({
+          userId: new ObjectId(userId),
+        });
+
+        // get total pages
+        const pages = Math.ceil(total / limit);
 
         res.status(StatusCodes.OK).json({
-          books,
+          books: result,
+          page,
+          pages,
         });
       } catch (error) {
         console.log(error);

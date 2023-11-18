@@ -39,9 +39,11 @@ export async function borrowBook(body) {
   }
 }
 
-export async function getBorrowedBooks() {
+export async function getBorrowedBooks(page) {
   try {
-    const { data } = await axiosInstance.get("books/user/borrowed");
+    const { data } = await axiosInstance.get(
+      `books/user/borrowed/?page=${page}`,
+    );
     return data;
   } catch (error) {
     throw new Error(error.response.data.message || error.response.data);

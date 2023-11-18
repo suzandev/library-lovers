@@ -4,7 +4,7 @@ import SectionHeading from "../components/SectionHeading";
 import useBorrowedBook from "../hooks/useBorrowedBook";
 
 export default function BorrowedBooks() {
-  const { books, isLoading, isError, error } = useBorrowedBook();
+  const { books, isLoading, isError, error, pages } = useBorrowedBook();
   return (
     <section>
       <div className="my-6">
@@ -28,9 +28,11 @@ export default function BorrowedBooks() {
         ) : (
           <div>No books</div>
         )}
-        <div className="flex justify-end">
-          <Pagination />
-        </div>
+        {pages > 1 && (
+          <div className="flex justify-end">
+            <Pagination pages={pages} />
+          </div>
+        )}
       </div>
     </section>
   );

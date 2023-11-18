@@ -33,7 +33,7 @@ export default function AllBooks() {
 
             {pages > 1 && (
               <div className="flex justify-end">
-                <Pagination />
+                <Pagination pages={pages} />
               </div>
             )}
           </>
