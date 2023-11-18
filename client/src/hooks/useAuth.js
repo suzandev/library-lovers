@@ -10,6 +10,6 @@ export default function useAuth() {
   return {
     isAuthenticated: user?.user?.isAuthenticated || user?.isAuthenticated,
     isLoading,
-    librarian: user?.user?.role === "librarian" || user?.role === "librarian",
+    librarian: user?.role === "librarian",
   };
 }

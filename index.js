@@ -359,9 +359,20 @@ async function run() {
         });
       }
     );
-    app.get("/api/v1/books", isLoggedIn, async (req, res) => {
+
+    app.get("/api/v1/books", async (req, res) => {
+      let queries = { ...req.query };
+      const excludeFields = ["page", "limit"];
+      excludeFields.forEach((item) => delete queries[item]);
+      // if query value is null then remove from queries
+      Object.keys(queries).forEach((item) => {
+        if (!queries[item]) delete queries[item];
+      });
+
       try {
-        const books = await bookCollection.find({}).toArray();
+        let result = bookCollection.find({ ...queries });
+        const books = await result.toArray();
+
         res.status(StatusCodes.OK).json(books);
       } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

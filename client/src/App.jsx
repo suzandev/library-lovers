@@ -54,7 +54,7 @@ function App() {
               path="/books/edit/:bookId"
               element={<AddBook editBook={true} />}
             />
-            <Route path="/all-books" element={<AllBooks />} />
+            <Route path="/books/all" element={<AllBooks />} />
             <Route path="/books/:category" element={<AllBooks />} />
             <Route path="/borrowed-Books" element={<BorrowedBooks />} />
             <Route path="/books/details/:bookId" element={<BookDetails />} />

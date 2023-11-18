@@ -6,7 +6,7 @@ export const navMenuItems = [
 
   {
     name: "All books",
-    path: "/all-books",
+    path: "/books/all",
   },
   {
     name: "Borrowed books",
