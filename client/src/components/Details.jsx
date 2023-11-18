@@ -39,6 +39,7 @@ export default function Details() {
             <AppButton
               type="button"
               title="Borrow"
+              loading={book.quantity === 0}
               handleClick={() => {
                 document.getElementById("my_modal_1").showModal();
               }}
