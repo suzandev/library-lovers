@@ -246,7 +246,7 @@ async function run() {
         });
 
         res.status(StatusCodes.OK).json({
-          message: "Unauthorized",
+          message: "Logged out successfully!",
         });
       });
     });
@@ -359,6 +359,13 @@ async function run() {
       }
       res.status(StatusCodes.OK).json({
         message: "Book deleted successfully",
+      });
+    });
+
+    // Not found route
+    app.use("*", (req, res) => {
+      res.status(StatusCodes.NOT_FOUND).json({
+        message: "Route not found",
       });
     });
   } catch (error) {

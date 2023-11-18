@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import useAuth from "../hooks/useAuth";
+import useLogout from "../hooks/useLogout";
 import AppButton from "./AppButton";
 
 export default function AuthButtons({ smallDev }) {
   const { isAuthenticated } = useAuth();
+  const { logout, isLoading } = useLogout();
 
   return (
     <div
@@ -18,7 +20,8 @@ export default function AuthButtons({ smallDev }) {
             title="Logout"
             to="/"
             type="button"
-            handleClick={() => {}}
+            handleClick={logout}
+            loading={isLoading}
           />
         </>
       ) : (
