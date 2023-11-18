@@ -1,9 +1,10 @@
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
-import { sliderContent } from "../constant";
+import useBorrowedBook from "../hooks/useBorrowedBook";
 
 export default function BorrowedBooks() {
+  const { books, isLoading, isError, error } = useBorrowedBook();
   return (
     <section>
       <div className="my-6">
@@ -14,11 +15,19 @@ export default function BorrowedBooks() {
             titleGreen="Our best collections"
           />
         </div>
-        <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {sliderContent.map((category) => (
-            <BookCard key={category.name} book={category} type="book" />
-          ))}
-        </div>
+        {isLoading ? (
+          <div>Loading</div>
+        ) : isError ? (
+          <div>{error.message}</div>
+        ) : books?.length > 0 ? (
+          <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            {books.map((book) => (
+              <BookCard key={book._id} book={book.book} type="book" />
+            ))}
+          </div>
+        ) : (
+          <div>No books</div>
+        )}
         <div className="flex justify-end">
           <Pagination />
         </div>

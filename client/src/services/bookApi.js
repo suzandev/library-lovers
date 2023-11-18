@@ -38,3 +38,12 @@ export async function borrowBook(body) {
     throw new Error(error.response.data.message || error.response.data);
   }
 }
+
+export async function getBorrowedBooks() {
+  try {
+    const { data } = await axiosInstance.get("books/user/borrowed");
+    return data;
+  } catch (error) {
+    throw new Error(error.response.data.message || error.response.data);
+  }
+}
