@@ -17,3 +17,12 @@ export async function addBook(body) {
     throw new Error(error.response.data.message || error.response.data);
   }
 }
+
+export async function getBook(id) {
+  try {
+    const { data } = await axiosInstance.get(`books/${id}`);
+    return data;
+  } catch (error) {
+    throw new Error(error.response.data.message || error.response.data);
+  }
+}

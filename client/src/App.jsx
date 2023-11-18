@@ -45,14 +45,14 @@ function App() {
           >
             <Route path="/add-book" element={<AddBook />} />
             <Route
-              path="/books/edit/:id"
+              path="/books/edit/:bookId"
               element={<AddBook editBook={true} />}
             />
             <Route path="/all-books" element={<AllBooks />} />
             <Route path="/books/:category" element={<AllBooks />} />
             <Route path="/borrowed-Books" element={<BorrowedBooks />} />
-            <Route path="/books/details/:id" element={<BookDetails />} />
-            <Route path="/books/reading/:id" element={<Environment />} />
+            <Route path="/books/details/:bookId" element={<BookDetails />} />
+            <Route path="/books/reading/:bookId" element={<Environment />} />
             <Route path="/environment/:environment" element={<Environment />} />
           </Route>
 
