@@ -5,7 +5,7 @@ import SectionHeading from "../components/SectionHeading";
 import useGetBooks from "../hooks/useGetBooks";
 
 export default function AllBooks() {
-  const { books, isLoading, isError, error } = useGetBooks();
+  const { books, isLoading, isError, error, pages } = useGetBooks();
 
   return (
     <section>
@@ -31,9 +31,11 @@ export default function AllBooks() {
               ))}
             </div>
 
-            <div className="flex justify-end">
-              <Pagination />
-            </div>
+            {pages > 1 && (
+              <div className="flex justify-end">
+                <Pagination />
+              </div>
+            )}
           </>
         ) : (
           <div>No books</div>

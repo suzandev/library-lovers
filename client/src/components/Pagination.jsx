@@ -1,21 +1,18 @@
 import { useEffect } from "react";
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
+import useGetBooks from "../hooks/useGetBooks";
 
 export default function Pagination() {
+  const { pages } = useGetBooks();
   const [searchParam, setSearchParam] = useSearchParams();
   const currentPage = Number(searchParam.get("page"));
 
-  const totalPages = 10;
-
-  const pageNumbers = Array.from(
-    { length: totalPages },
-    (_, index) => index + 1,
-  );
+  const pageNumbers = Array.from({ length: pages }, (_, index) => index + 1);
 
   const nextPage = () => {
     let newPage = currentPage + 1;
-    if (newPage > totalPages) {
+    if (newPage > pages) {
       newPage = 1;
     }
 
@@ -26,7 +23,7 @@ export default function Pagination() {
   const prevPage = () => {
     let newPage = currentPage - 1;
     if (newPage < 1) {
-      newPage = totalPages;
+      newPage = pages;
     }
 
     searchParam.set("page", newPage.toString());
@@ -48,7 +45,7 @@ export default function Pagination() {
   return (
     <div className="my-6 flex items-center justify-between gap-5">
       <button
-        className="bg-brand-green grid h-10 w-10 place-items-center text-white"
+        className="grid h-10 w-10 place-items-center bg-brand-green text-white"
         onClick={prevPage}
       >
         <HiChevronDoubleLeft />
@@ -59,7 +56,7 @@ export default function Pagination() {
           key={page}
           className={`${
             currentPage === page
-              ? "text-brand-green bg-brand-white"
+              ? "bg-brand-white text-brand-green"
               : "bg-brand-green text-white"
           } grid h-10 w-10 place-items-center max-md:hidden`}
           onClick={() => randomPage(page)}
@@ -69,11 +66,11 @@ export default function Pagination() {
       ))}
 
       <div className="hidden max-md:block">
-        <span className="text-brand-green">{currentPage}</span> of {totalPages}
+        <span className="text-brand-green">{currentPage}</span> of {pages}
       </div>
 
       <button
-        className="bg-brand-green grid h-10 w-10 place-items-center text-white"
+        className="grid h-10 w-10 place-items-center bg-brand-green text-white"
         onClick={nextPage}
       >
         <HiChevronDoubleRight />
