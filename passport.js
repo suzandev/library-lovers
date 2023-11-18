@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import client from "./database.js";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 
@@ -29,7 +30,6 @@ passport.use(
             name: profile.displayName,
             email: profile._json.email,
             picture: profile._json.picture,
-            _id: profile.id,
             role: "user",
           });
           return cb(null, user);

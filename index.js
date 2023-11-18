@@ -170,17 +170,9 @@ async function run() {
     // User auth routes
     app.get("/api/v1/auth/user/me", isLoggedIn, async (req, res) => {
       try {
-        // User from session
-        if (req.user._id) {
-          return res.status(StatusCodes.OK).json({
-            ...req.user,
-            isAuthenticated: true,
-          });
-        }
-
         // User from database
         const loggedUser = await userCollection.findOne({
-          _id: new ObjectId(req.user.userId),
+          _id: new ObjectId(req.user.userId || req.user._id),
         });
 
         if (!loggedUser) {
@@ -479,7 +471,7 @@ async function run() {
       const { bookId, returnDate, name, email } = req.body;
       const currentDate = new Date().toISOString().split("T")[0];
 
-      const user = req.user?.userId || req.user?._id;
+      const userId = req.user?.userId || req.user?._id;
 
       try {
         if (!bookId || !returnDate || !name || !email) {
@@ -497,7 +489,7 @@ async function run() {
         // check if book is already borrowed
         const borrowedBook = await borrowedBooksCollection.findOne({
           bookId: new ObjectId(bookId),
-          userId: new ObjectId(req.user.userId),
+          userId: new ObjectId(userId),
         });
 
         if (borrowedBook) {
@@ -521,7 +513,7 @@ async function run() {
         // insert borrowed book
         await borrowedBooksCollection.insertOne({
           bookId: new ObjectId(bookId),
-          userId: new ObjectId(user),
+          userId: new ObjectId(userId),
           name,
           email,
           borrowedDate: currentDate,
@@ -550,13 +542,14 @@ async function run() {
     });
 
     app.get("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
-      const user = req.user?.userId || req.user?._id;
+      const userId = req.user?.userId || req.user?._id;
+
       try {
         const books = await borrowedBooksCollection
           .aggregate([
             {
               $match: {
-                userId: new ObjectId(user),
+                userId: new ObjectId(userId),
               },
             },
             {
