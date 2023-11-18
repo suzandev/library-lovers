@@ -10,6 +10,7 @@ import Environment from "./pages/Environment";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const { getUserIsLoading } = useAppContext();
@@ -44,6 +45,7 @@ function App() {
           <Route path="/environment/:environment" element={<Environment />} />
         </Route>
 
+        <Route path="/notFound" element={<NotFound />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
