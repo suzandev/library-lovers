@@ -168,15 +168,10 @@ async function run() {
     app.get("/api/v1/auth/user/me", isLoggedIn, async (req, res) => {
       try {
         // User from session
-        if (req.user) {
+        if (req.user._id) {
           return res.status(StatusCodes.OK).json({
-            user: {
-              name: req.user.name,
-              email: req.user.email,
-              role: req.user.role,
-              picture: req.user.picture,
-              isAuthenticated: true,
-            },
+            ...req.user,
+            isAuthenticated: true,
           });
         }
 
@@ -191,15 +186,10 @@ async function run() {
           });
         }
 
-        const user = req.user.email ? req.user : loggedUser;
         res.status(StatusCodes.OK).json({
-          user: {
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            picture: user.picture,
-            isAuthenticated: true,
-          },
+          ...loggedUser,
+          isAuthenticated: true,
+          password: undefined,
         });
       } catch (error) {
         console.log(error);

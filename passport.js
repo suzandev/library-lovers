@@ -17,7 +17,7 @@ passport.use(
     async function (accessToken, refreshToken, profile, cb) {
       try {
         await client.connect();
-        const userCollection = client.db("library-lover").collection("user");
+        const userCollection = client.db("library-lover").collection("users");
         const user = await userCollection.findOne({
           email: profile._json.email,
         });
