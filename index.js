@@ -305,8 +305,14 @@ async function run() {
       }
     );
     app.get("/api/v1/books", isLoggedIn, async (req, res) => {
-      const books = await bookCollection.find({}).toArray();
-      res.status(StatusCodes.OK).json(books);
+      try {
+        const books = await bookCollection.find({}).toArray();
+        res.status(StatusCodes.OK).json(books);
+      } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
     });
 
     app.get("/api/v1/books/:id", isLoggedIn, async (req, res) => {

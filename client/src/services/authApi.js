@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstace";
+import axiosInstance from "./axiosInstance";
 
 export async function login(email, password) {
   try {

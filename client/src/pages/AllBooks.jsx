@@ -1,18 +1,11 @@
-import { useEffect } from "react";
 import AvailableBooksToggler from "../components/AvailableBooksToggler";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
-import { useAppContext } from "../hooks/useAppContext";
+import useGetBooks from "../hooks/useGetBooks";
 
 export default function AllBooks() {
-  const { getBooks, books, getBooksIsLoading, getBooksIsError, error } =
-    useAppContext();
-
-  useEffect(() => {
-    getBooks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { books, isLoading, isError, error } = useGetBooks();
 
   return (
     <section>
@@ -26,10 +19,10 @@ export default function AllBooks() {
           <AvailableBooksToggler />
         </div>
 
-        {getBooksIsLoading ? (
+        {isLoading ? (
           <div>Loading</div>
-        ) : getBooksIsError ? (
-          <div>{error}</div>
+        ) : isError ? (
+          <div>{error.message}</div>
         ) : books?.length > 0 ? (
           <>
             <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
