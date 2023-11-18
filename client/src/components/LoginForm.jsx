@@ -1,7 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../hooks/useAppContext";
-import ErrorMsg from "./ErrorMsg";
+import useLogin from "../hooks/useLogin";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
@@ -14,16 +12,22 @@ export default function LoginForm() {
     handleSubmit,
     reset,
   } = useForm();
-  const { loginUser, error, loginIsLoading, loginIsError } = useAppContext();
-  const navigate = useNavigate();
-
-  function handleLogin(values) {
-    const { email, password } = values;
-    loginUser({ email, password }, reset, navigate);
-  }
+  const { login, isLoading } = useLogin();
 
   return (
-    <form className="w-full" onSubmit={handleSubmit(handleLogin)}>
+    <form
+      className="w-full"
+      onSubmit={handleSubmit(({ email, password }) => {
+        login(
+          { email, password },
+          {
+            onSettled() {
+              reset();
+            },
+          },
+        );
+      })}
+    >
       <FormRow id="email" label="Email" errors={errors}>
         <Input
           type="email"
@@ -47,14 +51,8 @@ export default function LoginForm() {
         />
       </FormRow>
 
-      {loginIsError && (
-        <div className="mb-4">
-          <ErrorMsg label="Error">{error}</ErrorMsg>
-        </div>
-      )}
-
-      <FormButton type="submit" loading={loginIsLoading}>
-        Login {loginIsLoading && <LoadingSpinner />}
+      <FormButton type="submit" loading={isLoading}>
+        Login {isLoading && <LoadingSpinner />}
       </FormButton>
     </form>
   );
