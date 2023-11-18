@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
-import { useAppContext } from "../hooks/useAppContext";
+import useAuth from "../hooks/useAuth";
 import AppButton from "./AppButton";
 
 export default function AuthButtons({ smallDev }) {
-  const { logoutUser, user } = useAppContext();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div
@@ -11,14 +11,14 @@ export default function AuthButtons({ smallDev }) {
         smallDev ? "flex flex-col gap-4" : "flex gap-4 max-md:hidden"
       }`}
     >
-      {user ? (
+      {isAuthenticated ? (
         <>
           <AppButton title="Add" to="/add-book" />
           <AppButton
             title="Logout"
             to="/"
             type="button"
-            handleClick={logoutUser}
+            handleClick={() => {}}
           />
         </>
       ) : (
