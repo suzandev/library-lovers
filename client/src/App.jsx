@@ -15,9 +15,9 @@ import Register from "./pages/Register";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
+      staleTime: 1000 * 60,
       retry: (_failureCount, error) => {
-        if (error.message === "401") {
+        if (error.message === "401" && error.message === "429") {
           return false;
         }
         return true;
