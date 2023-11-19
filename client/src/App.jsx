@@ -17,7 +17,7 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60,
       retry: (_failureCount, error) => {
-        if (error.message === "401" && error.message === "429") {
+        if (error.message === "401") {
           return false;
         }
         return true;

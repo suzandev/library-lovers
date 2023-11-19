@@ -1,51 +1,29 @@
 import axiosInstance from "./axiosInstance";
+import catchAsync from "./catchAsync";
 
-export async function getBooks({ category, abo }) {
-  try {
-    const { data } = await axiosInstance.get(
-      `books/?category=${category}&abo=${abo}`,
-    );
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const getBooks = catchAsync(async ({ category, abo }) => {
+  const { data } = await axiosInstance.get(
+    `books/?category=${category}&abo=${abo}`,
+  );
+  return data;
+});
 
-export async function addBook(body) {
-  try {
-    const { data } = await axiosInstance.post("books", body);
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const addBook = catchAsync(async (body) => {
+  const { data } = await axiosInstance.post("books", body);
+  return data;
+});
 
-export async function getBook(id) {
-  try {
-    const { data } = await axiosInstance.get(`books/${id}`);
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const getBook = catchAsync(async (id) => {
+  const { data } = await axiosInstance.get(`books/${id}`);
+  return data;
+});
 
-export async function borrowBook(body) {
-  try {
-    const { data } = await axiosInstance.post("books/user/borrowed", body);
+export const borrowBook = catchAsync(async (body) => {
+  const { data } = await axiosInstance.post("books/user/borrowed", body);
+  return data;
+});
 
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
-
-export async function getBorrowedBooks(page) {
-  try {
-    const { data } = await axiosInstance.get(
-      `books/user/borrowed/?page=${page}`,
-    );
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const getBorrowedBooks = catchAsync(async (page) => {
+  const { data } = await axiosInstance.get(`books/user/borrowed/?page=${page}`);
+  return data;
+});

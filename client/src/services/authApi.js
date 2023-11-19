@@ -1,44 +1,29 @@
 import axiosInstance from "./axiosInstance";
+import catchAsync from "./catchAsync";
 
-export async function login(email, password) {
-  try {
-    const { data } = await axiosInstance.post("auth/login", {
-      email,
-      password,
-    });
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const login = catchAsync(async (email, password) => {
+  const { data } = await axiosInstance.post("auth/login", {
+    email,
+    password,
+  });
+  return data;
+});
 
-export async function register(name, email, password) {
-  try {
-    const { data } = await axiosInstance.post("auth/register", {
-      name,
-      email,
-      password,
-    });
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const register = catchAsync(async (name, email, password) => {
+  const { data } = await axiosInstance.post("auth/register", {
+    name,
+    email,
+    password,
+  });
+  return data;
+});
 
-export async function getCurrentUser() {
-  try {
-    const { data } = await axiosInstance.get("auth/user/me");
-    return data;
-  } catch (error) {
-    throw new Error(error.response.status);
-  }
-}
+export const getCurrentUser = catchAsync(async () => {
+  const { data } = await axiosInstance.get("auth/user/me");
+  return data;
+});
 
-export async function logout() {
-  try {
-    const { data } = await axiosInstance.post("auth/logout");
-    return data;
-  } catch (error) {
-    throw new Error(error.response.data.message || error.response.data);
-  }
-}
+export const logout = catchAsync(async () => {
+  const { data } = await axiosInstance.post("auth/logout");
+  return data;
+});
