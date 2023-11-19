@@ -70,6 +70,7 @@ async function run() {
     await client.connect();
     const userCollection = client.db("library-lover").collection("users");
     const bookCollection = client.db("library-lover").collection("books");
+    const reviewCollection = client.db("library-lover").collection("reviews");
     const borrowedBooksCollection = client
       .db("library-lover")
       .collection("borrowedBooks");
@@ -556,7 +557,7 @@ async function run() {
       }
     });
 
-    app.get("/api/v1/books/user/borrowed", async (req, res) => {
+    app.get("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
       const userId = req.user?.userId || req.user?._id;
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
@@ -567,7 +568,7 @@ async function run() {
           .aggregate([
             {
               $match: {
-                userId: new ObjectId("6559972c3ae09600322f1519"),
+                userId: new ObjectId(userId),
               },
             },
             {
@@ -618,6 +619,81 @@ async function run() {
         });
       }
     });
+
+    app.post(
+      "/api/v1/books/user/return/:borrowId",
+      isLoggedIn,
+      async (req, res) => {
+        const { rating, comment } = req.body;
+        const userId = req.user?.userId || req.user?._id;
+        const borrowId = req.params.borrowId;
+        // const userId = "6559972c3ae09600322f1519";
+
+        try {
+          if (!borrowId) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+              message: "Please provide valid book",
+            });
+          }
+
+          const borrowedBook = await borrowedBooksCollection.findOne({
+            _id: new ObjectId(borrowId),
+            userId: new ObjectId(userId),
+          });
+
+          if (!borrowedBook) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+              message: "Book not borrowed",
+            });
+          }
+
+          // Get review
+          const review = await reviewCollection.findOne({
+            bookId: new ObjectId(borrowedBook.bookId),
+            userId: new ObjectId(userId),
+          });
+
+          if (!review) {
+            if (!comment || !rating) {
+              res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Please provide comment and rating",
+              });
+            }
+
+            await reviewCollection.insertOne({
+              bookId: new ObjectId(borrowedBook.bookId),
+              userId: new ObjectId(userId),
+              rating: parseInt(rating),
+              comment,
+            });
+          }
+
+          // update borrowed book
+          await borrowedBooksCollection.deleteOne({
+            _id: new ObjectId(borrowId),
+          });
+
+          // update book quantity
+          await bookCollection.updateOne(
+            { _id: new ObjectId(borrowedBook.bookId) },
+            {
+              $inc: {
+                quantity: 1,
+              },
+            }
+          );
+
+          res.status(StatusCodes.OK).json({
+            message: "Book returned successfully",
+          });
+        } catch (error) {
+          console.log(error);
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Something went wrong!",
+          });
+        }
+      }
+    );
 
     // Not found route
     app.use("*", (req, res) => {

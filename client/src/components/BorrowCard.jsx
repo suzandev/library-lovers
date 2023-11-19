@@ -51,7 +51,7 @@ export default function BorrowCard({ bookInfo }) {
       </div>
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box bg-brand-white">
-          <RatingForm />
+          <RatingForm borrowId={bookInfo._id} />
         </div>
       </dialog>
     </>

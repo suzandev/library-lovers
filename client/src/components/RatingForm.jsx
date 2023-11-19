@@ -1,11 +1,13 @@
+import useReturnBook from "../hooks/useReturnBook";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
 import LoadingSpinner from "./LoadingSpinner";
 import { useForm, Controller } from "react-hook-form";
 import ReactStars from "react-rating-stars-component";
+import PropTypes from "prop-types";
 
-export default function RatingForm() {
+export default function RatingForm({ borrowId }) {
   const {
     register,
     formState: { errors },
@@ -13,21 +15,31 @@ export default function RatingForm() {
     handleSubmit,
     reset,
   } = useForm();
+
+  const { returnBook, isLoading } = useReturnBook();
+
   return (
     <form
       onSubmit={handleSubmit((values) => {
-        console.log(values);
-        document.getElementById("my_modal_2").close();
+        returnBook(
+          { ...values, borrowId },
+          {
+            onSettled: () => {
+              reset();
+              document.getElementById("my_modal_2").close();
+            },
+          },
+        );
       })}
     >
       <FormRow
-        id="review"
+        id="comment"
         label="Write a Review about the book"
         errors={errors}
       >
         <Input
           type="textarea"
-          form={register("review", {
+          form={register("comment", {
             required: "Tell us brief description of this book",
             minLength: {
               value: 15,
@@ -60,10 +72,14 @@ export default function RatingForm() {
         />
       </FormRow>
 
-      <FormButton type="submit">
+      <FormButton type="submit" loading={isLoading}>
         Submit
-        {/* {isLoading && <LoadingSpinner />} */}
+        {isLoading && <LoadingSpinner />}
       </FormButton>
     </form>
   );
 }
+
+RatingForm.propTypes = {
+  borrowId: PropTypes.string.isRequired,
+};

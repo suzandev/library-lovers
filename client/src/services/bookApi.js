@@ -1,6 +1,11 @@
 import axiosInstance from "./axiosInstance";
 import catchAsync from "./catchAsync";
 
+export const slider = catchAsync(async () => {
+  const { data } = await axiosInstance.get("slider/books");
+  return data;
+});
+
 export const getBooks = catchAsync(async ({ category, abo }) => {
   const { data } = await axiosInstance.get(
     `books/?category=${category}&abo=${abo}`,
@@ -28,7 +33,10 @@ export const getBorrowedBooks = catchAsync(async (page) => {
   return data;
 });
 
-export const slider = catchAsync(async () => {
-  const { data } = await axiosInstance.get("slider/books");
+export const returnBook = catchAsync(async ({ borrowId, ...body }) => {
+  const { data } = await axiosInstance.post(
+    `books/user/return/${borrowId}`,
+    body,
+  );
   return data;
 });
