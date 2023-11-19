@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
 import PropTypes from "prop-types";
 
 export default function Pagination({ pages }) {
   const [searchParam, setSearchParam] = useSearchParams();
-  const currentPage = Number(searchParam.get("page"));
+  const currentPage = Number(searchParam.get("page")) || 1;
 
   const pageNumbers = Array.from({ length: pages }, (_, index) => index + 1);
 
@@ -33,13 +32,6 @@ export default function Pagination({ pages }) {
     searchParam.set("page", pageNumber.toString());
     setSearchParam(searchParam);
   };
-
-  useEffect(() => {
-    if (!currentPage) {
-      searchParam.set("page", "1");
-      setSearchParam(searchParam);
-    }
-  }, [currentPage, searchParam, setSearchParam]);
 
   return (
     <div className="my-6 flex items-center justify-between gap-5">

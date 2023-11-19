@@ -10,7 +10,7 @@ export default function BookCard({ book, type }) {
     <div className="bg-brand-white shadow-md">
       <div className="h-60 w-full overflow-hidden">
         <img
-          src={book.image.url}
+          src={book.image}
           alt={book.name}
           className="w-full object-cover"
         />

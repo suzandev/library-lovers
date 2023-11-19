@@ -6,11 +6,7 @@ export default function BorrowCard({ bookInfo }) {
   return (
     <div className="bg-brand-white shadow-md">
       <div className="h-60 w-full overflow-hidden">
-        <img
-          src={book.image.url}
-          alt={book.name}
-          className="w-full object-cover"
-        />
+        <img src={book.image} alt={book.name} className="w-full object-cover" />
       </div>
       <div className="p-4">
         <div className="flex flex-wrap items-start justify-between">

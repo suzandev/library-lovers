@@ -328,10 +328,7 @@ async function run() {
           name,
           author,
           description,
-          image: {
-            public_id: imageUrl.public_id,
-            url: imageUrl.secure_url,
-          },
+          image: imageUrl.secure_url,
           category,
           quantity: parseInt(quantity),
           rating: parseInt(rating),

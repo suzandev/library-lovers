@@ -16,7 +16,7 @@ export default function Details() {
       <div className="my-6 flex flex-col items-center gap-10">
         <div className="h-96 max-w-sm shadow-md">
           <img
-            src={book.image.url}
+            src={book.image}
             alt={book.name}
             className="h-full w-full object-contain"
           />
