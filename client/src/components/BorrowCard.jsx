@@ -1,9 +1,19 @@
 import PropTypes from "prop-types";
 import AppButton from "./AppButton";
 import RatingForm from "./RatingForm";
+import useReturnBook from "../hooks/useReturnBook";
+import { useEffect } from "react";
 
 export default function BorrowCard({ bookInfo }) {
   const { book } = bookInfo;
+  const { reviewed, returnBook, isLoading } = useReturnBook();
+
+  useEffect(() => {
+    if (!isLoading && !reviewed) {
+      document.getElementById("my_modal_2").showModal();
+    }
+  }, [isLoading, reviewed]);
+
   return (
     <>
       <div className="bg-brand-white shadow-md">
@@ -42,13 +52,15 @@ export default function BorrowCard({ bookInfo }) {
             <AppButton
               type="button"
               title="Return this book"
+              loading={isLoading}
               handleClick={() => {
-                document.getElementById("my_modal_2").showModal();
+                returnBook({ borrowId: bookInfo._id });
               }}
             />
           </div>
         </div>
       </div>
+
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box bg-brand-white">
           <RatingForm borrowId={bookInfo._id} />

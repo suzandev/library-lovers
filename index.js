@@ -624,7 +624,6 @@ async function run() {
       "/api/v1/books/user/return/:borrowId",
       isLoggedIn,
       async (req, res) => {
-        const { rating, comment } = req.body;
         const userId = req.user?.userId || req.user?._id;
         const borrowId = req.params.borrowId;
         // const userId = "6559972c3ae09600322f1519";
@@ -644,27 +643,6 @@ async function run() {
           if (!borrowedBook) {
             return res.status(StatusCodes.BAD_REQUEST).json({
               message: "Book not borrowed",
-            });
-          }
-
-          // Get review
-          const review = await reviewCollection.findOne({
-            bookId: new ObjectId(borrowedBook.bookId),
-            userId: new ObjectId(userId),
-          });
-
-          if (!review) {
-            if (!comment || !rating) {
-              res.status(StatusCodes.BAD_REQUEST).json({
-                message: "Please provide comment and rating",
-              });
-            }
-
-            await reviewCollection.insertOne({
-              bookId: new ObjectId(borrowedBook.bookId),
-              userId: new ObjectId(userId),
-              rating: parseInt(rating),
-              comment,
             });
           }
 
@@ -694,6 +672,49 @@ async function run() {
         }
       }
     );
+
+    // Reviews rating routes
+    app.post("/api/v1/books/user/review/:bookId", async (req, res) => {
+      const { rating, comment } = req.body;
+      // const userId = req.user?.userId || req.user?._id;
+      const bookId = req.params.bookId;
+      const userId = "6559972c3ae09600322f1519";
+      try {
+        if (!comment || !rating) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Please provide comment and rating",
+          });
+        }
+
+        const review = await reviewCollection.findOne({
+          bookId: new ObjectId(bookId),
+          userId: new ObjectId(userId),
+        });
+
+        if (review) {
+          console.log("exist");
+          return res.status(StatusCodes.OK).json({
+            reviewed: true,
+          });
+        }
+
+        await reviewCollection.insertOne({
+          bookId: new ObjectId(borrowedBook.bookId),
+          userId: new ObjectId(userId),
+          rating: parseInt(rating),
+          comment,
+        });
+
+        res.status(StatusCodes.OK).json({
+          reviewed: true,
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    });
 
     // Not found route
     app.use("*", (req, res) => {
