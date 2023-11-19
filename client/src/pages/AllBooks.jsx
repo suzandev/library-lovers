@@ -1,7 +1,9 @@
 import AvailableBooksToggler from "../components/AvailableBooksToggler";
 import BookCard from "../components/BookCard";
+import ErrorAlert from "../components/ErrorAlert";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
+import WarningAlert from "../components/WarningAlert";
 import useGetBooks from "../hooks/useGetBooks";
 
 export default function AllBooks() {
@@ -22,7 +24,7 @@ export default function AllBooks() {
         {isLoading ? (
           <div>Loading</div>
         ) : isError ? (
-          <div>{error.message}</div>
+          <ErrorAlert message={error.message} />
         ) : books?.length > 0 ? (
           <>
             <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -38,7 +40,7 @@ export default function AllBooks() {
             )}
           </>
         ) : (
-          <div>No books</div>
+          <WarningAlert message={`${books.length} book found`} />
         )}
       </div>
     </section>

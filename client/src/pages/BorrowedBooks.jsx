@@ -1,6 +1,7 @@
 import BorrowCard from "../components/BorrowCard";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
+import WarningAlert from "../components/WarningAlert";
 import useBorrowedBook from "../hooks/useBorrowedBook";
 
 export default function BorrowedBooks() {
@@ -26,7 +27,7 @@ export default function BorrowedBooks() {
             ))}
           </div>
         ) : (
-          <div>No books</div>
+          <WarningAlert message={`${books.length} book found`} />
         )}
         {pages > 1 && (
           <div className="flex justify-end">

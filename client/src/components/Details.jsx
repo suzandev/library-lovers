@@ -2,13 +2,15 @@ import ReactStars from "react-rating-stars-component";
 import AppButton from "../components/AppButton";
 import useGetBook from "../hooks/useGetBook";
 import BookBorrowForm from "./BookBorrowForm";
+import ErrorAlert from "./ErrorAlert";
+import Loading from "../pages/Loading";
 export default function Details() {
   const { book, isLoading, isError, error } = useGetBook();
 
   return isLoading ? (
-    <div>Loading...</div>
+    <Loading />
   ) : isError ? (
-    <div>{error.message}</div>
+    <ErrorAlert message={error.message} />
   ) : (
     <>
       <div className="my-6 flex flex-col items-center gap-10">
