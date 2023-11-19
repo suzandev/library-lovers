@@ -538,7 +538,7 @@ async function run() {
       }
     });
 
-    app.get("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {
+    app.get("/api/v1/books/user/borrowed", async (req, res) => {
       const userId = req.user?.userId || req.user?._id;
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
@@ -549,7 +549,7 @@ async function run() {
           .aggregate([
             {
               $match: {
-                userId: new ObjectId(userId),
+                userId: new ObjectId("6559972c3ae09600322f1519"),
               },
             },
             {
@@ -562,6 +562,19 @@ async function run() {
             },
             {
               $unwind: "$book",
+            },
+            {
+              $project: {
+                _id: 1,
+                borrowedDate: 1,
+                returnDate: 1,
+                book: {
+                  name: 1,
+                  author: 1,
+                  image: 1,
+                  category: 1,
+                },
+              },
             },
           ])
           .skip(skip)
