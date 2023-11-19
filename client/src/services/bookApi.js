@@ -27,3 +27,8 @@ export const getBorrowedBooks = catchAsync(async (page) => {
   const { data } = await axiosInstance.get(`books/user/borrowed/?page=${page}`);
   return data;
 });
+
+export const slider = catchAsync(async () => {
+  const { data } = await axiosInstance.get("slider/books");
+  return data;
+});

@@ -413,6 +413,24 @@ async function run() {
       }
     });
 
+    app.get("/api/v1/slider/books", async (req, res) => {
+      try {
+        const books = await bookCollection
+          .find({ quantity: { $gt: 0 } })
+          .limit(4)
+          .toArray();
+
+        res.status(StatusCodes.OK).json({
+          books,
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    });
+
     app.patch(
       "/api/v1/books/:id",
       isLoggedIn,

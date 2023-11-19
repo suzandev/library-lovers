@@ -11,7 +11,7 @@ export default function useGetBook() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["book"],
+    queryKey: ["book", bookId],
     queryFn: () => getBookApi(bookId),
   });
 
