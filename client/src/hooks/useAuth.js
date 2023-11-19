@@ -7,6 +7,8 @@ export default function useAuth() {
     queryFn: getCurrentUser,
   });
 
+
+
   return {
     isAuthenticated: user?.isAuthenticated,
     isLoading,

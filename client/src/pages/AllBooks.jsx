@@ -1,5 +1,6 @@
 import AvailableBooksToggler from "../components/AvailableBooksToggler";
-import BookCard from "../components/BookCard";
+
+import BooksContainer from "../components/BooksContainer";
 import ErrorAlert from "../components/ErrorAlert";
 import Pagination from "../components/Pagination";
 import SectionHeading from "../components/SectionHeading";
@@ -22,16 +23,12 @@ export default function AllBooks() {
         </div>
 
         {isLoading ? (
-          <div>Loading</div>
+          <div>Loading...</div>
         ) : isError ? (
           <ErrorAlert message={error.message} />
         ) : books?.length > 0 ? (
           <>
-            <div className="grid gap-4 max-sm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              {books.map((book) => (
-                <BookCard key={book._id} book={book} type="book" />
-              ))}
-            </div>
+            <BooksContainer books={books} />
 
             {pages > 1 && (
               <div className="flex justify-end">
