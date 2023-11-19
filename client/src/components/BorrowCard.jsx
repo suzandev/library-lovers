@@ -6,13 +6,13 @@ import { useEffect } from "react";
 
 export default function BorrowCard({ bookInfo }) {
   const { book } = bookInfo;
-  const { reviewed, returnBook, isLoading } = useReturnBook();
+  const { openForm, returnBook, isLoading } = useReturnBook();
 
   useEffect(() => {
-    if (!isLoading && !reviewed) {
+    if (!isLoading && openForm) {
       document.getElementById("my_modal_2").showModal();
     }
-  }, [isLoading, reviewed]);
+  }, [isLoading, openForm]);
 
   return (
     <>
@@ -63,7 +63,7 @@ export default function BorrowCard({ bookInfo }) {
 
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box bg-brand-white">
-          <RatingForm borrowId={bookInfo._id} />
+          <RatingForm bookId={book._id} borrowId={bookInfo._id} />
         </div>
       </dialog>
     </>

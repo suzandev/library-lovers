@@ -149,6 +149,108 @@ async function run() {
       };
     }
 
+    async function isReviewed(req, res, next) {
+      const userId = req.user?.userId || req.user?._id;
+      const borrowId = req.params.borrowId;
+      // const userId = "6559972c3ae09600322f1519";
+      try {
+        if (!borrowId) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Please provide valid book",
+          });
+        }
+
+        const borrowedBook = await borrowedBooksCollection.findOne({
+          _id: new ObjectId(borrowId),
+          userId: new ObjectId(userId),
+        });
+
+        if (!borrowedBook) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Book not borrowed",
+          });
+        }
+
+        const review = await reviewCollection.findOne({
+          bookId: new ObjectId(borrowedBook.bookId),
+          userId: new ObjectId(userId),
+        });
+
+        if (!review) {
+          return res.status(StatusCodes.OK).json({
+            openForm: true,
+          });
+        }
+
+        req.locals = {
+          bookId: borrowedBook.bookId,
+        };
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+      return next();
+    }
+
+    async function returnBook(req, res, next) {
+      const borrowId = req.params.borrowId;
+      const bookId = req.locals?.bookId || req.params.bookId;
+
+      try {
+        // update borrowed book
+        await borrowedBooksCollection.deleteOne({
+          _id: new ObjectId(borrowId),
+        });
+
+        // update book quantity
+        await bookCollection.updateOne(
+          { _id: new ObjectId(bookId) },
+          {
+            $inc: {
+              quantity: 1,
+            },
+          }
+        );
+
+        return next();
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    }
+
+    async function reviewBook(req, res, next) {
+      const { rating, comment } = req.body;
+      const userId = req.user?.userId || req.user?._id;
+      const bookId = req.params.bookId;
+      // const userId = "6559972c3ae09600322f1519";
+      try {
+        if (!comment || !rating) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Please provide comment and rating",
+          });
+        }
+
+        await reviewCollection.insertOne({
+          bookId: new ObjectId(bookId),
+          userId: new ObjectId(userId),
+          rating: parseInt(rating),
+          comment,
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+
+      return next();
+    }
+
     // Passport login route
     app.get(
       "/auth/google",
@@ -588,6 +690,7 @@ async function run() {
                 borrowedDate: 1,
                 returnDate: 1,
                 book: {
+                  _id: 1,
                   name: 1,
                   author: 1,
                   image: 1,
@@ -623,98 +726,27 @@ async function run() {
     app.post(
       "/api/v1/books/user/return/:borrowId",
       isLoggedIn,
+      isReviewed,
+      returnBook,
       async (req, res) => {
-        const userId = req.user?.userId || req.user?._id;
-        const borrowId = req.params.borrowId;
-        // const userId = "6559972c3ae09600322f1519";
-
-        try {
-          if (!borrowId) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-              message: "Please provide valid book",
-            });
-          }
-
-          const borrowedBook = await borrowedBooksCollection.findOne({
-            _id: new ObjectId(borrowId),
-            userId: new ObjectId(userId),
-          });
-
-          if (!borrowedBook) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-              message: "Book not borrowed",
-            });
-          }
-
-          // update borrowed book
-          await borrowedBooksCollection.deleteOne({
-            _id: new ObjectId(borrowId),
-          });
-
-          // update book quantity
-          await bookCollection.updateOne(
-            { _id: new ObjectId(borrowedBook.bookId) },
-            {
-              $inc: {
-                quantity: 1,
-              },
-            }
-          );
-
-          res.status(StatusCodes.OK).json({
-            message: "Book returned successfully",
-          });
-        } catch (error) {
-          console.log(error);
-          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: "Something went wrong!",
-          });
-        }
+        res.status(StatusCodes.OK).json({
+          message: "Book returned successfully",
+        });
       }
     );
 
     // Reviews rating routes
-    app.post("/api/v1/books/user/review/:bookId", async (req, res) => {
-      const { rating, comment } = req.body;
-      // const userId = req.user?.userId || req.user?._id;
-      const bookId = req.params.bookId;
-      const userId = "6559972c3ae09600322f1519";
-      try {
-        if (!comment || !rating) {
-          return res.status(StatusCodes.BAD_REQUEST).json({
-            message: "Please provide comment and rating",
-          });
-        }
-
-        const review = await reviewCollection.findOne({
-          bookId: new ObjectId(bookId),
-          userId: new ObjectId(userId),
-        });
-
-        if (review) {
-          console.log("exist");
-          return res.status(StatusCodes.OK).json({
-            reviewed: true,
-          });
-        }
-
-        await reviewCollection.insertOne({
-          bookId: new ObjectId(borrowedBook.bookId),
-          userId: new ObjectId(userId),
-          rating: parseInt(rating),
-          comment,
-        });
-
+    app.post(
+      "/api/v1/books/user/review/:bookId/:borrowId",
+      isLoggedIn,
+      reviewBook,
+      returnBook,
+      (req, res) => {
         res.status(StatusCodes.OK).json({
-          reviewed: true,
-        });
-      } catch (error) {
-        console.log(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          message: "Something went wrong!",
+          message: "Book returned successfully",
         });
       }
-    });
+    );
 
     // Not found route
     app.use("*", (req, res) => {

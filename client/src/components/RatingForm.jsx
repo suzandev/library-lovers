@@ -1,4 +1,3 @@
-import useReturnBook from "../hooks/useReturnBook";
 import FormButton from "./FormButton";
 import FormRow from "./FormRow";
 import Input from "./Input";
@@ -6,8 +5,9 @@ import LoadingSpinner from "./LoadingSpinner";
 import { useForm, Controller } from "react-hook-form";
 import ReactStars from "react-rating-stars-component";
 import PropTypes from "prop-types";
+import usePostReview from "../hooks/usePostReview";
 
-export default function RatingForm({ borrowId }) {
+export default function RatingForm({ borrowId, bookId }) {
   const {
     register,
     formState: { errors },
@@ -16,13 +16,13 @@ export default function RatingForm({ borrowId }) {
     reset,
   } = useForm();
 
-  const { returnBook, isLoading } = useReturnBook();
+  const { postReview, isLoading } = usePostReview();
 
   return (
     <form
       onSubmit={handleSubmit((values) => {
-        returnBook(
-          { ...values, borrowId },
+        postReview(
+          { ...values, borrowId, bookId },
           {
             onSettled: () => {
               reset();
@@ -82,4 +82,5 @@ export default function RatingForm({ borrowId }) {
 
 RatingForm.propTypes = {
   borrowId: PropTypes.string.isRequired,
+  bookId: PropTypes.string.isRequired,
 };

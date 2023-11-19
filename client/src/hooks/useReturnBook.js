@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function useReturnBook() {
   const queryClient = useQueryClient();
-  const [reviewed, setReviewed] = useState(true);
+  const [openForm, setOpenForm] = useState(false);
   const {
     mutate: returnBook,
     isLoading,
@@ -14,7 +14,7 @@ export default function useReturnBook() {
     mutationFn: (body) => returnBookApi(body),
     onSuccess: (data) => {
       queryClient.invalidateQueries(["books", "borrowed", "book"]);
-      setReviewed(data?.reviewed);
+      setOpenForm(data?.openForm);
       if (data.message) toast.success(data.message);
     },
     onError: (err) => {
@@ -23,5 +23,5 @@ export default function useReturnBook() {
     },
   });
 
-  return { returnBook, isLoading, isError, reviewed };
+  return { returnBook, isLoading, isError, openForm };
 }
