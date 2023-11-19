@@ -7,12 +7,13 @@ export default function useAuth() {
     queryFn: getCurrentUser,
   });
 
-
+  const isAuthenticated = user?.isAuthenticated;
+  const librarian = user?.role === "librarian";
 
   return {
-    isAuthenticated: user?.isAuthenticated,
+    isAuthenticated,
     isLoading,
-    librarian: user?.role === "librarian",
+    librarian,
     user,
   };
 }

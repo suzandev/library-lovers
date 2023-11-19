@@ -4,10 +4,7 @@ export default function catchAsync(fn) {
     try {
       return await fn(...args);
     } catch (error) {
-      if (error.response.status === 401) {
-        throw new Error(error.response);
-      }
-      throw new Error(error.response.data.message || error.response.data);
+      throw new Error(error.response.data.message);
     }
   };
 }
