@@ -638,47 +638,43 @@ async function run() {
       }
     );
 
-    app.get(
-      "/api/v1/books/:id/related",
-      // isLoggedIn,
-      async (req, res) => {
-        try {
-          const bookId = req.params.id;
+    app.get("/api/v1/books/:id/related", isLoggedIn, async (req, res) => {
+      try {
+        const bookId = req.params.id;
 
-          // Find the details of the given book
-          const book = await bookCollection.findOne(
-            { _id: new ObjectId(bookId) },
-            { projection: { category: 1, name: 1, author: 1 } }
-          );
+        // Find the details of the given book
+        const book = await bookCollection.findOne(
+          { _id: new ObjectId(bookId) },
+          { projection: { category: 1, name: 1, author: 1 } }
+        );
 
-          // Check if the book is found
-          if (!book) {
-            return res
-              .status(StatusCodes.NOT_FOUND)
-              .json({ message: "Book not found" });
-          }
-
-          // Destructure the properties only if the book is not null
-          const { category, name, author } = book;
-
-          // Find related books with the same category, name, or author (excluding the current book)
-          const relatedBooks = await bookCollection
-            .find({
-              _id: { $ne: new ObjectId(bookId) }, // Exclude the current book
-              $or: [{ category: category }, { name: name }, { author: author }],
-            })
-            .limit(3)
-            .toArray();
-
-          res.status(StatusCodes.OK).json(relatedBooks);
-        } catch (error) {
-          console.log(error);
-          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: "Something went wrong!",
-          });
+        // Check if the book is found
+        if (!book) {
+          return res
+            .status(StatusCodes.NOT_FOUND)
+            .json({ message: "Book not found" });
         }
+
+        // Destructure the properties only if the book is not null
+        const { category, name, author } = book;
+
+        // Find related books with the same category, name, or author (excluding the current book)
+        const relatedBooks = await bookCollection
+          .find({
+            _id: { $ne: new ObjectId(bookId) }, // Exclude the current book
+            $or: [{ category: category }, { name: name }, { author: author }],
+          })
+          .limit(3)
+          .toArray();
+
+        res.status(StatusCodes.OK).json(relatedBooks);
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
       }
-    );
+    });
 
     // Borrowed Book routes
     app.post("/api/v1/books/user/borrowed", isLoggedIn, async (req, res) => {

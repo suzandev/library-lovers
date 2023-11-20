@@ -45,3 +45,8 @@ export const updateBook = catchAsync(async ({ bookId, body }) => {
   const { data } = await axiosInstance.put(`books/${bookId}`, body);
   return data;
 });
+
+export const relatedBooks = catchAsync(async (bookId) => {
+  const { data } = await axiosInstance.get(`books/${bookId}/related`);
+  return data;
+});
