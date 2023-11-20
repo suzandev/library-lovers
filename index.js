@@ -363,13 +363,11 @@ async function run() {
 
       sendToken(user._id, res);
       res.status(StatusCodes.OK).json({
-        user: {
-          name: user.name,
-          email: user.email,
-          picture: user.picture,
-          role: user.role,
-          isAuthenticated: true,
-        },
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+        role: user.role,
+        isAuthenticated: true,
       });
     });
 
