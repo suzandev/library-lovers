@@ -10,7 +10,7 @@ export default function AuthButtons({ smallDev }) {
   const { logout, isLoading } = useLogout();
 
   return (
-    <>
+    <div className="flex items-center">
       {isAuthenticated && <User user={user} />}
 
       <div className="flex items-center gap-4 max-md:hidden">
@@ -36,7 +36,7 @@ export default function AuthButtons({ smallDev }) {
         </div>
         <DarkThemeToggler />
       </div>
-    </>
+    </div>
   );
 }
 

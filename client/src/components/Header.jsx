@@ -18,17 +18,19 @@ export default function Header() {
 
           {showNav && <SmallDeviceNav handleClose={() => setShowNav(false)} />}
 
-          <AuthButtons />
+          <div className="flex items-center">
+            <AuthButtons />
 
-          <div className="flex items-center gap-4 md:hidden">
-            <button
-              onClick={() => setShowNav(true)}
-              className="text-brand-green md:hidden"
-            >
-              <HiOutlineBars3CenterLeft className="text-3xl" />
-            </button>
+            <div className="flex items-center gap-4 md:hidden">
+              <button
+                onClick={() => setShowNav(true)}
+                className="text-brand-green md:hidden"
+              >
+                <HiOutlineBars3CenterLeft className="text-3xl" />
+              </button>
 
-            <DarkThemeToggler />
+              <DarkThemeToggler />
+            </div>
           </div>
         </div>
       </div>
