@@ -777,6 +777,74 @@ async function run() {
       }
     );
 
+    app.get("/api/v1/books/users/reviews", async (req, res) => {
+      console.log(req.query.page);
+
+      try {
+        // Getting all user single latest review
+        const page = Number(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page - 1) * limit;
+
+        const result = reviewCollection.aggregate([
+          {
+            $sort: { createdAt: -1 }, // Sort reviews by createdAt field in descending order
+          },
+          {
+            $group: {
+              _id: "$userId", // Group reviews by userId
+              review: { $first: "$$ROOT" }, // Get the first (latest) review in each group
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "_id",
+              foreignField: "_id",
+              as: "user",
+            },
+          },
+          {
+            $project: {
+              review: 1,
+              user: {
+                name: 1,
+                picture: 1,
+              },
+            },
+          },
+          {
+            $unwind: "$user",
+          },
+          {
+            $skip: skip,
+          },
+          {
+            $limit: limit,
+          },
+        ]);
+
+        const reviews = await result.toArray();
+
+        // get total books
+        const total = await reviewCollection.countDocuments();
+
+        // get total pages
+        const pages = Math.ceil(total / limit);
+
+        res.status(StatusCodes.OK).json({
+          reviews,
+          page,
+          pages,
+        });
+      } catch (error) {
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: "Something went wrong!",
+        });
+      }
+    });
+
     // Not found route
     app.use("*", (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({

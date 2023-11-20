@@ -8,3 +8,8 @@ export const postReview = catchAsync(async ({ bookId, borrowId, ...body }) => {
   );
   return data;
 });
+
+export const getReviews = catchAsync(async (page) => {
+  const { data } = await axiosInstance.get(`books/users/reviews?page=${page}`);
+  return data;
+});
