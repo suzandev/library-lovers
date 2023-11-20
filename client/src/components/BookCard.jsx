@@ -49,7 +49,7 @@ export default function BookCard({ book, type }) {
 
           {/* This button will show if user role is librarian */}
           {user?.role === "librarian" && (
-            <AppButton to={`/books/edit/${book.id}`} title="Update" />
+            <AppButton to={`/books/edit/${book._id}`} title="Update" />
           )}
         </div>
       </div>

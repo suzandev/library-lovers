@@ -9,7 +9,6 @@ import session from "express-session";
 import helmet from "helmet";
 import hpp from "hpp";
 import { StatusCodes } from "http-status-codes";
-import { url } from "inspector";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import morgan from "morgan";
@@ -399,8 +398,6 @@ async function run() {
         const { name, author, description, quantity, category, rating } =
           req.body;
 
-        console.log(req.body);
-
         if (
           !name ||
           !author ||
@@ -561,53 +558,125 @@ async function run() {
       }
     });
 
-    app.patch(
+    app.put(
       "/api/v1/books/:id",
       isLoggedIn,
       permission("librarian"),
+      upload.single("image"),
       async (req, res) => {
         const { id } = req.params;
-        const { title, author, description, image, category } = req.body;
-        const book = await bookCollection.updateOne(
-          { _id: new ObjectId(id) },
-          {
-            $set: {
-              title,
-              author,
-              description,
-              image,
-              category,
-            },
-          }
-        );
+        const { name, author, description, category, quantity, rating } =
+          req.body;
 
-        if (!book) {
-          return res.status(StatusCodes.NOT_FOUND).json({
-            message: "Book not found",
+        console.log(description);
+
+        try {
+          if (
+            !name ||
+            !author ||
+            !description ||
+            !category ||
+            !rating ||
+            !quantity
+          ) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+              message: "All fields are required",
+            });
+          }
+
+          const book = await bookCollection.updateOne(
+            { _id: new ObjectId(id) },
+            {
+              $set: {
+                name,
+                author,
+                description,
+                category,
+                quantity: parseInt(quantity),
+                rating: parseInt(rating),
+              },
+            }
+          );
+
+          if (!book) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+              message: "Book not found",
+            });
+          }
+
+          if (req.file) {
+            const b64 = Buffer.from(req.file.buffer).toString("base64");
+            let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+
+            const imageUrl = await cloudinaryUpload(dataURI);
+
+            if (imageUrl.error) {
+              return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: "Something went wrong!",
+              });
+            }
+
+            await bookCollection.updateOne(
+              { _id: new ObjectId(id) },
+              {
+                $set: {
+                  image: imageUrl.secure_url,
+                },
+              }
+            );
+          }
+
+          res.status(StatusCodes.OK).json({
+            message: "Book updated successfully",
+          });
+        } catch (error) {
+          console.log(error);
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Something went wrong!",
           });
         }
-
-        res.status(StatusCodes.OK).json({
-          message: "Book updated successfully",
-        });
       }
     );
 
-    app.delete(
-      "/api/v1/books/:id",
-      isLoggedIn,
-      permission("librarian"),
+    app.get(
+      "/api/v1/books/:id/related",
+      // isLoggedIn,
       async (req, res) => {
-        const { id } = req.params;
-        const book = await bookCollection.deleteOne({ _id: new ObjectId(id) });
-        if (!book) {
-          return res.status(StatusCodes.NOT_FOUND).json({
-            message: "Book not found",
+        try {
+          const bookId = req.params.id;
+
+          // Find the details of the given book
+          const book = await bookCollection.findOne(
+            { _id: new ObjectId(bookId) },
+            { projection: { category: 1, name: 1, author: 1 } }
+          );
+
+          // Check if the book is found
+          if (!book) {
+            return res
+              .status(StatusCodes.NOT_FOUND)
+              .json({ message: "Book not found" });
+          }
+
+          // Destructure the properties only if the book is not null
+          const { category, name, author } = book;
+
+          // Find related books with the same category, name, or author (excluding the current book)
+          const relatedBooks = await bookCollection
+            .find({
+              _id: { $ne: new ObjectId(bookId) }, // Exclude the current book
+              $or: [{ category: category }, { name: name }, { author: author }],
+            })
+            .limit(3)
+            .toArray();
+
+          res.status(StatusCodes.OK).json(relatedBooks);
+        } catch (error) {
+          console.log(error);
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Something went wrong!",
           });
         }
-        res.status(StatusCodes.OK).json({
-          message: "Book deleted successfully",
-        });
       }
     );
 

@@ -39,7 +39,6 @@ export default function BookBorrowForm() {
       <FormRow id="email" label="Email" errors={errors}>
         <Input
           type="email"
-          id="email"
           defaultValue={user?.email}
           form={register("email", {
             required: "This field is required",
@@ -54,7 +53,6 @@ export default function BookBorrowForm() {
       <FormRow label="Name" id="name" errors={errors}>
         <Input
           type="text"
-          id="name"
           defaultValue={user?.name}
           form={register("name", {
             required: "Please tell us your user name",
@@ -67,7 +65,6 @@ export default function BookBorrowForm() {
       <FormRow label="Return Date" id="returnDate" errors={errors}>
         <Input
           type="date"
-          id="returnDate"
           form={register("returnDate", {
             required: "Please tell us your user name",
             validate: (value) =>

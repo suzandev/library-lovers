@@ -5,9 +5,10 @@ export default function Input({ type, form, defaultValue }) {
     <textarea
       className="w-full border-none bg-brand-gray px-4 py-2 text-sm text-brand-text outline-none outline-1 outline-gray-300 focus:outline-brand-green"
       rows={5}
+      defaultValue={defaultValue}
       id={form.name}
       {...form}
-    ></textarea>
+    />
   ) : (
     <input
       className="w-full border-none bg-brand-gray px-4 py-2 text-sm text-brand-text outline-none outline-1 outline-gray-300 focus:outline-brand-green"

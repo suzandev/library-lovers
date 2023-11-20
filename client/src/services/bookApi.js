@@ -40,3 +40,8 @@ export const returnBook = catchAsync(async ({ borrowId, ...body }) => {
   );
   return data;
 });
+
+export const updateBook = catchAsync(async ({ bookId, body }) => {
+  const { data } = await axiosInstance.put(`books/${bookId}`, body);
+  return data;
+});

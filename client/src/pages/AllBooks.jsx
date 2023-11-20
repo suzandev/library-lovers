@@ -1,5 +1,4 @@
-import AvailableBooksToggler from "../components/AvailableBooksToggler";
-
+import SwitchButton from "../components/SwitchButton";
 import BooksContainer from "../components/BooksContainer";
 import ErrorAlert from "../components/ErrorAlert";
 import Pagination from "../components/Pagination";
@@ -19,7 +18,7 @@ export default function AllBooks() {
             titleBlue="Best books from"
             titleGreen="Our best collections"
           />
-          <AvailableBooksToggler />
+          <SwitchButton />
         </div>
 
         {isLoading ? (

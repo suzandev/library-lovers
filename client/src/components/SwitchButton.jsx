@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-export default function AvailableBooksToggler() {
+export default function SwitchButton() {
   const [searchParam, setSearchParam] = useSearchParams();
   const [availAbleBooks, setAvailAbleBooks] = useState(false);
 
