@@ -461,33 +461,62 @@ async function run() {
 
       const excludeFields = ["page", "limit", "abo"];
       excludeFields.forEach((item) => delete queries[item]);
+
       // if query value is null then remove from queries
       Object.keys(queries).forEach((item) => {
         if (queries[item] === "undefined") delete queries[item];
       });
 
       try {
-        let result = bookCollection.find({ ...queries });
+        let result = bookCollection.aggregate([
+          {
+            $match: { ...queries },
+          },
+          {
+            $lookup: {
+              from: "reviews", // Assuming your reviews collection is named "reviews"
+              localField: "_id", // Assuming the book's _id field matches with the reviews' bookId field
+              foreignField: "bookId",
+              as: "reviews",
+            },
+          },
+          {
+            $addFields: {
+              rating: { $ifNull: [{ $avg: "$reviews.rating" }, 1] },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              author: 1,
+              description: 1,
+              image: 1,
+              category: 1,
+              quantity: 1,
+              rating: 1,
+            },
+          },
+          {
+            $match: {
+              $or: [
+                { "reviews.rating": { $gt: 0 } }, // Filter books with reviews that have ratings greater than 0
+                { reviews: { $exists: false } }, // Include books without reviews
+              ],
+            },
+          },
+          {
+            $skip: skip,
+          },
+          {
+            $limit: limit,
+          },
+        ]);
 
-        // Find books where quantity gether than 0
-        if (req.query.abo !== "null" && req.query.abo) {
-          result = result.filter({ quantity: { $gt: 0 } });
-        }
-
-        // pagination
-        result = result.skip(skip).limit(limit);
-
-        // Execute query
         const books = await result.toArray();
 
         // get total books
-        let total;
-        if (req.query.abo !== "null" && req.query.abo) {
-          const quantityQuery = { ...queries, quantity: { $gt: 0 } };
-          total = await bookCollection.countDocuments(quantityQuery);
-        } else {
-          total = await bookCollection.countDocuments({ ...queries });
-        }
+        const total = await bookCollection.countDocuments({ ...queries });
 
         // get total pages
         const pages = Math.ceil(total / limit);
