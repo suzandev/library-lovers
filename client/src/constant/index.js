@@ -6,11 +6,11 @@ export const navMenuItems = [
 
   {
     name: "All books",
-    path: "/books-all",
+    path: "/books-all/?page=1",
   },
   {
     name: "Borrowed books",
-    path: "/borrowed-books",
+    path: "/borrowed-books/?page=1",
   },
 ];
 

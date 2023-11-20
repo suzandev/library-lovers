@@ -6,9 +6,9 @@ export const slider = catchAsync(async () => {
   return data;
 });
 
-export const getBooks = catchAsync(async ({ category, abo }) => {
+export const getBooks = catchAsync(async ({ category, abo, page }) => {
   const { data } = await axiosInstance.get(
-    `books/?category=${category}&abo=${abo}`,
+    `books/?category=${category}&abo=${abo}&page=${page}`,
   );
   return data;
 });

@@ -9,11 +9,7 @@ export default function BookCard({ book, type }) {
   return type === "book" ? (
     <div className="bg-brand-white shadow-md">
       <div className="h-60 w-full overflow-hidden">
-        <img
-          src={book.image}
-          alt={book.name}
-          className="w-full object-cover"
-        />
+        <img src={book.image} alt={book.name} className="w-full object-cover" />
       </div>
       <div className="p-4">
         <div className="flex flex-wrap items-start justify-between">
@@ -59,7 +55,10 @@ export default function BookCard({ book, type }) {
       </div>
     </div>
   ) : (
-    <Link to={`books/${book.to}`} className="bg-brand-white shadow-md">
+    <Link
+      to={`books/category/${book.to}/?page=1`}
+      className="bg-brand-white shadow-md"
+    >
       <div className="h-60 w-full overflow-hidden">
         <img src={book.image} alt={book.name} className="w-full object-cover" />
       </div>
