@@ -32,8 +32,8 @@ const app = express();
 app.set("trust proxy", 1);
 
 // only when ready to deploy
-const dirname = path.dirname(process.argv[1]);
-app.use(express.static(path.resolve(dirname, "./client/dist")));
+// const dirname = path.dirname(process.argv[1]);
+// app.use(express.static(path.resolve(dirname, "./client/dist")));
 
 // Limit request from same api
 const limit = rateLimit({
@@ -914,7 +914,7 @@ async function run() {
     });
 
     // only when ready to deploy
-    app.use("*", express.static(path.resolve(dirname, "./client/dist")));
+    // app.use("*", express.static(path.resolve(dirname, "./client/dist")));
   } catch (error) {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
