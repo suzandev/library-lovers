@@ -5,9 +5,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "setup-production": "npm run install-client && npm run build-client && npm install",
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
     "client": "npm run dev --prefix client",
     "server": "set NODE_ENV=development&& nodemon index.js --ignore client",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\""
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\"",
+    "production": "set NODE_ENV=production&& node index.js"
   },
   "author": "Suzan Chandra",
   "license": "ISC",
@@ -29,8 +33,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.6.0",
-    "passport-google-oauth20": "^2.0.0",
-    "react-error-boundary": "^4.0.11"
+    "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

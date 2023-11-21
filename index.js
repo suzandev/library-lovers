@@ -20,15 +20,20 @@ import client from "./database.js";
 import "./passport.js";
 
 dotenv.config();
-const origin = "http://localhost:5173";
+let origin = "http://localhost:5173";
+
+if (process.env.NODE_ENV === "production") {
+  // origin = "https://library-lovers.vercel.app";
+  origin = "http://localhost:3000";
+}
 
 // initializing app
 const app = express();
 app.set("trust proxy", 1);
 
 // only when ready to deploy
-// const dirname = path.dirname(process.argv[1]);
-// app.use(express.static(path.resolve(dirname, "./client/dist")));
+const dirname = path.dirname(process.argv[1]);
+app.use(express.static(path.resolve(dirname, "./client/dist")));
 
 // Limit request from same api
 const limit = rateLimit({
@@ -908,12 +913,17 @@ async function run() {
       }
     });
 
-    // Not found route
-    app.use("*", (req, res) => {
-      res.status(StatusCodes.NOT_FOUND).json({
-        message: "Route not found",
+    if (process.env.NODE_ENV === "production") {
+      // only when ready to deploy
+      app.use("*", express.static(path.resolve(dirname, "./client/dist")));
+    } else {
+      // Not found route
+      app.use("*", (req, res) => {
+        res.status(StatusCodes.NOT_FOUND).json({
+          message: "Route not found",
+        });
       });
-    });
+    }
   } catch (error) {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
