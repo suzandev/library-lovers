@@ -11,7 +11,8 @@
     "client": "npm run dev --prefix client",
     "server": "set NODE_ENV=development&& nodemon index.js --ignore client",
     "start": "concurrently --kill-others-on-fail \"npm run server\" \" npm run client\"",
-    "production": "set NODE_ENV=production&& node index.js"
+    "production": "set NODE_ENV=production&& node index.js",
+    "install": "npm run install-client && npm install"
   },
   "author": "Suzan Chandra",
   "license": "ISC",
