@@ -17,6 +17,7 @@ import passport from "passport";
 import cloudinaryUpload from "./cloudinary.js";
 import client from "./database.js";
 import "./passport.js";
+import * as path from "path";
 
 dotenv.config();
 let origin = "http://localhost:3000";
@@ -24,6 +25,10 @@ let origin = "http://localhost:3000";
 // initializing app
 const app = express();
 app.set("trust proxy", 1);
+
+// only when ready to deploy
+const dirname = path.dirname(process.argv[1]);
+app.use(express.static(path.resolve(dirname, "./client/dist")));
 
 // Limit request from same api
 const limit = rateLimit({
@@ -903,9 +908,8 @@ async function run() {
       }
     });
 
-    app.use("/", (req, res) => {
-      res.send("Hello World!");
-    });
+    // only when ready to deploy
+    app.use("/", express.static(path.resolve(dirname, "./client/dist")));
 
     app.use("*", (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({
