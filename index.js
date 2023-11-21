@@ -913,17 +913,8 @@ async function run() {
       }
     });
 
-    if (process.env.NODE_ENV === "production") {
-      // only when ready to deploy
-      app.use("*", express.static(path.resolve(dirname, "./client/dist")));
-    } else {
-      // Not found route
-      app.use("*", (req, res) => {
-        res.status(StatusCodes.NOT_FOUND).json({
-          message: "Route not found",
-        });
-      });
-    }
+    // only when ready to deploy
+    app.use("*", express.static(path.resolve(dirname, "./client/dist")));
   } catch (error) {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
@@ -935,8 +926,10 @@ async function run() {
 run().catch(console.dir);
 
 // Server Configuration
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Running ${process.env.NODE_ENV} server`);
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;
