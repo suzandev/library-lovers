@@ -20,7 +20,7 @@ import "./passport.js";
 import * as path from "path";
 
 dotenv.config();
-let origin = "http://localhost:3000";
+let origin = "https://library-lover.onrender.com";
 
 // initializing app
 const app = express();
