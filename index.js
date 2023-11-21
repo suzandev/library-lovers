@@ -14,18 +14,13 @@ import { ObjectId } from "mongodb";
 import morgan from "morgan";
 import multer from "multer";
 import passport from "passport";
-import * as path from "path";
+// import * as path from "path";
 import cloudinaryUpload from "./cloudinary.js";
 import client from "./database.js";
 import "./passport.js";
 
 dotenv.config();
-let origin = "http://localhost:5173";
-
-if (process.env.NODE_ENV === "production") {
-  // origin = "https://library-lovers.vercel.app";
-  origin = "http://localhost:3000";
-}
+let origin = "http://localhost:3000";
 
 // initializing app
 const app = express();
