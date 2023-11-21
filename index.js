@@ -14,7 +14,7 @@ import { ObjectId } from "mongodb";
 import morgan from "morgan";
 import multer from "multer";
 import passport from "passport";
-// import * as path from "path";
+import * as path from "path";
 import cloudinaryUpload from "./cloudinary.js";
 import client from "./database.js";
 import "./passport.js";
@@ -27,8 +27,8 @@ const app = express();
 app.set("trust proxy", 1);
 
 // only when ready to deploy
-// const dirname = path.dirname(process.argv[1]);
-// app.use(express.static(path.resolve(dirname, "./client/dist")));
+const dirname = path.dirname(process.argv[1]);
+app.use(express.static(path.resolve(dirname, "./client/dist")));
 
 // Limit request from same api
 const limit = rateLimit({
@@ -910,6 +910,9 @@ async function run() {
 
     // only when ready to deploy
     // app.use("*", express.static(path.resolve(dirname, "./client/dist")));
+    app.use("*", (req, res) => {
+      res.send("Server is ready");
+    });
   } catch (error) {
     console.error("Error connect to database", error);
     // Ensures that the client will close when you finish/error
@@ -926,5 +929,3 @@ app.listen(PORT, () => {
   console.log(`Running ${process.env.NODE_ENV} server`);
   console.log(`Server is running on port ${PORT}`);
 });
-
-export default app;
